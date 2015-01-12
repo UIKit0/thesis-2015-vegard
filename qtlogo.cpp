@@ -51,7 +51,6 @@ static const qreal cross_width = 0.25;
 static const qreal bar_thickness = 0.113137;
 static const qreal logo_depth = 0.10;
 
-//! [0]
 struct Geometry
 {
     QVector<GLushort> faces;
@@ -62,9 +61,7 @@ struct Geometry
     void finalize();
     void loadArrays() const;
 };
-//! [0]
 
-//! [1]
 class Patch
 {
 public:
@@ -86,7 +83,6 @@ public:
     Smoothing sm;
     Geometry *geom;
 };
-//! [1]
 
 static inline void qSetColor(float colorVec[], QColor c)
 {
@@ -108,8 +104,9 @@ void Geometry::finalize()
 
     // Finish smoothing normals by ensuring accumulated normals are returned
     // to length 1.0.
-    for (int i = 0; i < normals.count(); ++i)
+    for (int i = 0; i < normals.count(); ++i) {
         normals[i].normalize();
+    }
 }
 
 void Geometry::appendSmooth(const QVector3D &a, const QVector3D &n, int from)
@@ -119,9 +116,11 @@ void Geometry::appendSmooth(const QVector3D &a, const QVector3D &n, int from)
     // (working backwards, since most often the points shared are between faces
     // recently added).
     int v = vertices.count() - 1;
-    for ( ; v >= from; --v)
-        if (qFuzzyCompare(vertices[v], a))
+    for ( ; v >= from; --v) {
+        if (qFuzzyCompare(vertices[v], a)) {
             break;
+        }
+    }
 
     if (v < from) {
         // The vertex was not found so add it as a new one, and initialize
@@ -150,11 +149,11 @@ void Geometry::appendFaceted(const QVector3D &a, const QVector3D &n)
 }
 
 Patch::Patch(Geometry *g)
-   : start(g->faces.count())
-   , count(0)
-   , initv(g->vertices.count())
-   , sm(Patch::Smooth)
-   , geom(g)
+    : start(g->faces.count())
+    , count(0)
+    , initv(g->vertices.count())
+    , sm(Patch::Smooth)
+    , geom(g)
 {
     qSetColor(faceColor, QColor(Qt::darkGray));
 }
@@ -169,7 +168,6 @@ void Patch::translate(const QVector3D &t)
     mat.translate(t);
 }
 
-//! [2]
 void Patch::draw() const
 {
     glPushMatrix();
@@ -180,7 +178,6 @@ void Patch::draw() const
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices + start);
     glPopMatrix();
 }
-//! [2]
 
 void Patch::addTri(const QVector3D &a, const QVector3D &b, const QVector3D &c, const QVector3D &n)
 {
@@ -220,8 +217,9 @@ void Patch::addQuad(const QVector3D &a, const QVector3D &b,  const QVector3D &c,
 static inline QVector<QVector3D> extrude(const QVector<QVector3D> &vertices, qreal depth)
 {
     QVector<QVector3D> extr = vertices;
-    for (int v = 0; v < extr.count(); ++v)
+    for (int v = 0; v < extr.count(); ++v) {
         extr[v].setZ(extr[v].z() - depth);
+    }
     return extr;
 }
 
@@ -230,14 +228,16 @@ class Rectoid
 public:
     void translate(const QVector3D &t)
     {
-        for (int i = 0; i < parts.count(); ++i)
+        for (int i = 0; i < parts.count(); ++i) {
             parts[i]->translate(t);
+        }
     }
 
     void rotate(qreal deg, QVector3D axis)
     {
-        for (int i = 0; i < parts.count(); ++i)
+        for (int i = 0; i < parts.count(); ++i) {
             parts[i]->rotate(deg, axis);
+        }
     }
 
     // No special Rectoid destructor - the parts are fetched out of this member
@@ -264,8 +264,9 @@ RectPrism::RectPrism(Geometry *g, qreal width, qreal height, qreal depth)
     r[tr].setY(height);
     r[tl].setY(height);
     QVector3D adjToCenter(-width / 2.0, -height / 2.0, depth / 2.0);
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i) {
         r[i] += adjToCenter;
+    }
     fb->addQuad(r[bl], r[br], r[tr], r[tl]);
 
     // back face
@@ -307,21 +308,25 @@ RectTorus::RectTorus(Geometry *g, qreal iRad, qreal oRad, qreal depth, int k)
     // are generated for the curving sides, but a faceted edge is created between
     // sides and front/back
     Patch *front = new Patch(g);
-    for (int i = 0; i < k; ++i)
+    for (int i = 0; i < k; ++i) {
         front->addQuad(outside[i], inside[i],
                        inside[(i + 1) % k], outside[(i + 1) % k]);
+    }
     Patch *back = new Patch(g);
-    for (int i = 0; i < k; ++i)
+    for (int i = 0; i < k; ++i) {
         back->addQuad(in_back[i], out_back[i],
                       out_back[(i + 1) % k], in_back[(i + 1) % k]);
+    }
     Patch *is = new Patch(g);
-    for (int i = 0; i < k; ++i)
+    for (int i = 0; i < k; ++i) {
         is->addQuad(in_back[i], in_back[(i + 1) % k],
                     inside[(i + 1) % k], inside[i]);
+    }
     Patch *os = new Patch(g);
-    for (int i = 0; i < k; ++i)
+    for (int i = 0; i < k; ++i) {
         os->addQuad(out_back[(i + 1) % k], out_back[i],
                     outside[i], outside[(i + 1) % k]);
+    }
     parts << front << back << is << os;
 }
 
@@ -340,11 +345,11 @@ QtLogo::~QtLogo()
 
 void QtLogo::setColor(QColor c)
 {
-    for (int i = 0; i < parts.count(); ++i)
+    for (int i = 0; i < parts.count(); ++i) {
         qSetColor(parts[i]->faceColor, c);
+    }
 }
 
-//! [3]
 void QtLogo::buildGeometry(int divisions, qreal scale)
 {
     qreal cw = cross_width * scale;
@@ -368,9 +373,7 @@ void QtLogo::buildGeometry(int divisions, qreal scale)
 
     geom->finalize();
 }
-//! [3]
 
-//! [4]
 void QtLogo::draw() const
 {
     geom->loadArrays();
@@ -378,10 +381,10 @@ void QtLogo::draw() const
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
 
-    for (int i = 0; i < parts.count(); ++i)
+    for (int i = 0; i < parts.count(); ++i) {
         parts[i]->draw();
+    }
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 }
-//! [4]
