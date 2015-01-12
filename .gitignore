@@ -1,0 +1,6 @@
+.moc
+.obj
+.qmake.*
+moc_*
+*.o
+*.app
