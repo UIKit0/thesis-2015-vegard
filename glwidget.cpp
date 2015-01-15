@@ -44,16 +44,89 @@
 #include <math.h>
 
 #include "glwidget.h"
-#include "qtlogo.h"
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
 #endif
 
+// http://stackoverflow.com/questions/5915753/generate-a-plane-with-triangle-strips
+
+// GLuint width;
+// GLuint height;
+GLfloat* vertices = 0;
+GLuint* indices = 0;
+
+GLuint getVerticesCount(GLuint width, GLuint height) {
+    return width * height * 3;
+}
+
+GLuint getIndicesCount(GLuint width, GLuint height) {
+    return (width * height) + (width - 1) * (height - 2);
+}
+
+void initVertices(GLuint width, GLuint height) {
+    vertices = new GLfloat[getVerticesCount(width, height)];
+    GLuint i = 0;
+
+    for(GLuint row = 0; row < height; row++) {
+        for(GLuint col = 0; col < width; col++) {
+            vertices[i++] = (GLfloat)col;
+            vertices[i++] = (GLfloat)row;
+            vertices[i++] = 0.0f;
+        }
+    }
+}
+
+void initIndices(GLuint width, GLuint height) {
+    GLuint iSize = getIndicesCount(width, height);
+    indices = new GLuint[iSize];
+    GLuint i = 0;
+
+    for(GLuint row = 0; row < height - 1; row++) {
+        if((row & 1) == 0) { // even rows
+            for(GLuint col = 0; col < width; col++) {
+                indices[i++] = col + row * width;
+                indices[i++] = col + (row + 1) * width;
+            }
+        } else { // odd rows
+            for(GLuint col = width - 1; col > 0; col--) {
+                indices[i++] = col + (row + 1) * width;
+                indices[i++] = col - 1 + + row * width;
+            }
+        }
+    }
+
+    // if((mHeight & 1) && mHeight > 2) {
+    //     mpIndices[i++] = (mHeight-1) * mWidth;
+    // }
+}
+
+GLfloat* getVertices(GLuint width, GLuint height) {
+    if(!vertices) {
+        initVertices(width, height);
+    }
+
+    return vertices;
+}
+
+GLuint* getIndices(GLuint width, GLuint height) {
+    if(!indices) {
+        initIndices(width, height);
+    }
+
+    return indices;
+}
+
+// void render() {
+//     glEnableClientState(GL_VERTEX_ARRAY);
+//     glVertexPointer(3, GL_FLOAT, 0, getVertices(width, height));
+//     glDrawElements(GL_TRIANGLE_STRIP, getIndicesCount(width, height), GL_UNSIGNED_INT, getIndices(width, height));
+//     glDisableClientState(GL_VERTEX_ARRAY);
+// }
+
 GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-    logo = 0;
 }
 
 GLWidget::~GLWidget()
@@ -72,22 +145,14 @@ QSize GLWidget::sizeHint() const
 
 void GLWidget::initializeGL()
 {
-    QColor qtGreen = QColor::fromCmykF(0.40, 0.0, 1.0, 0.0);
-    QColor qtPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
-
-    qglClearColor(qtPurple.dark());
-
-    logo = new QtLogo(this, 64);
-    logo->setColor(qtGreen.dark());
-
+    QColor qtBlack = Qt::black;
+    qglClearColor(qtBlack);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    // glEnable(GL_CULL_FACE);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_MULTISAMPLE);
-    static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 }
 
 void GLWidget::paintGL()
@@ -98,7 +163,77 @@ void GLWidget::paintGL()
     glRotatef(0, 1.0, 0.0, 0.0);
     glRotatef(0, 0.0, 1.0, 0.0);
     glRotatef(0, 0.0, 0.0, 1.0);
-    logo->draw();
+
+    // GLfloat vVertices[] = {  0.0f,  0.5f,  0.0f,
+    //                         -0.5f, -0.5f,  0.0f,
+    //                          0.5f, -0.5f,  0.0f };
+
+    // GLfloat vVertices[] = {  0.0f,  0.7f,  0.1f,
+    //                         -0.4f, -0.6f,  0.2f,
+    //                          0.3f, -0.8f,  0.3f };
+
+    // glPolygonMode( GL_FRONT, GL_LINE );
+    // glEnableVertexAttribArray(0);
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // GLfloat vertices[] = { 0.0f, 0.0f, 0.0f,   // 0
+    //                        0.0f, 1.0f, 0.0f,   // 1
+    //                        0.0f, 2.0f, 0.0f,   // 2
+    //                        0.0f, 3.0f, 0.0f,   // 3
+
+    //                        1.0f, 0.0f, 0.0f,   // 4
+    //                        1.0f, 1.0f, 0.0f,   // 5
+    //                        1.0f, 2.0f, 0.0f,   // 6
+    //                        1.0f, 3.0f, 0.0f,   // 7
+
+    //                        2.0f, 0.0f, 0.0f,   // 8
+    //                        2.0f, 1.0f, 0.0f,   // 9
+    //                        2.0f, 2.0f, 0.0f,   // 10
+    //                        2.0f, 3.0f, 0.0f,   // 11
+
+    //                        3.0f, 0.0f, 0.0f,   // 12
+    //                        3.0f, 1.0f, 0.0f,   // 13
+    //                        3.0f, 2.0f, 0.0f,   // 14
+    //                        3.0f, 3.0f, 0.0f }; // 15
+
+    // GLfloat vertices[] = { 0.0f, 0.0f, 0.0f,   // 0
+    //                        1.0f, 0.0f, 0.0f,   // 1
+    //                        2.0f, 0.0f, 0.0f,   // 2
+    //                        3.0f, 0.0f, 0.0f,   // 3
+
+    //                        0.0f, 1.0f, 0.0f,   // 4
+    //                        1.0f, 1.0f, 0.0f,   // 5
+    //                        2.0f, 1.0f, 0.0f,   // 6
+    //                        3.0f, 1.0f, 0.0f,   // 7
+
+    //                        0.0f, 2.0f, 0.0f,   // 8
+    //                        1.0f, 2.0f, 0.0f,   // 9
+    //                        2.0f, 2.0f, 0.0f,   // 10
+    //                        3.0f, 2.0f, 0.0f,   // 11
+
+    //                        0.0f, 3.0f, 0.0f,   // 12
+    //                        1.0f, 3.0f, 0.0f,   // 13
+    //                        2.0f, 3.0f, 0.0f,   // 14
+    //                        3.0f, 3.0f, 0.0f }; // 15
+
+    // GLuint indices[] = { 0, 4, 1, 5, 2, 6, 3, 7 };
+    // GLuint indices[] = { 0, 4, 1 };
+    // GLuint indices[] = { 0, 1, 4 };
+
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glEnableClientState(GL_VERTEX_ARRAY);
+    // glVertexPointer(3, GL_FLOAT, 0, vertices);
+    // glDrawElements(GL_TRIANGLE_STRIP, 3, GL_UNSIGNED_INT, indices);
+    // glDisableClientState(GL_VERTEX_ARRAY);
+
+    GLuint width = 10;
+    GLuint height = 10;
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, getVertices(width, height));
+    glDrawElements(GL_TRIANGLE_STRIP, getIndicesCount(width, height), GL_UNSIGNED_INT, getIndices(width, height));
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -109,9 +244,9 @@ void GLWidget::resizeGL(int width, int height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 #ifdef QT_OPENGL_ES_1
-    glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+    glOrthof(-1, +10, -1, +10, 4.0, 15.0);
 #else
-    glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+    glOrtho(-1, +10, -1, +10, 4.0, 15.0);
 #endif
     glMatrixMode(GL_MODELVIEW);
 }
