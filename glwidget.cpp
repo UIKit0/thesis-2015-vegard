@@ -49,23 +49,51 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
+Coordinate::Coordinate(GLfloat xc, GLfloat yc, GLfloat zc)
+    : x(xc), y(yc), z(zc)
+{
+}
+
+Coordinate unity(Coordinate coord) {
+    return coord;
+}
+
+Coordinate half(Coordinate coord) {
+    coord.x = coord.x / 2;
+    coord.y = coord.y / 2;
+    coord.z = coord.z / 2;
+    return coord;
+}
+
+void transform(GLfloat *in, GLfloat *out, int len, Coordinate fn(Coordinate)) {
+    for(int i = 0; i < len; i += 3) {
+        Coordinate coord(in[i], in[i + 1], in[i + 2]);
+        coord = fn(coord);
+        out[i]     = coord.x;
+        out[i + 1] = coord.y;
+        out[i + 2] = coord.z;
+    }
+}
+
 // http://stackoverflow.com/questions/5915753/generate-a-plane-with-triangle-strips
 
-// GLuint width;
-// GLuint height;
+// GLuint height = 10;
+// GLuint width = 10;
 GLfloat* vertices = 0;
 GLuint* indices = 0;
+GLuint verticesCount = 0;
+GLuint indicesCount = 0;
 
-GLuint getVerticesCount(GLuint width, GLuint height) {
-    return width * height * 3;
+GLuint getVerticesCount(GLuint height, GLuint width) {
+    return height * width * 3;
 }
 
-GLuint getIndicesCount(GLuint width, GLuint height) {
-    return (width * height) + (width - 1) * (height - 2);
+GLuint getIndicesCount(GLuint height, GLuint width) {
+    return (height * width) + (width - 1) * (height - 2);
 }
 
-void initVertices(GLuint width, GLuint height) {
-    vertices = new GLfloat[getVerticesCount(width, height)];
+void initVertices(GLuint height, GLuint width) {
+    vertices = new GLfloat[getVerticesCount(height, width)];
     GLuint i = 0;
 
     for(GLuint row = 0; row < height; row++) {
@@ -77,8 +105,8 @@ void initVertices(GLuint width, GLuint height) {
     }
 }
 
-void initIndices(GLuint width, GLuint height) {
-    GLuint iSize = getIndicesCount(width, height);
+void initIndices(GLuint height, GLuint width) {
+    GLuint iSize = getIndicesCount(height, width);
     indices = new GLuint[iSize];
     GLuint i = 0;
 
@@ -101,17 +129,17 @@ void initIndices(GLuint width, GLuint height) {
     // }
 }
 
-GLfloat* getVertices(GLuint width, GLuint height) {
+GLfloat* getVertices(GLuint height, GLuint width) {
     if(!vertices) {
-        initVertices(width, height);
+        initVertices(height, width);
     }
 
     return vertices;
 }
 
-GLuint* getIndices(GLuint width, GLuint height) {
+GLuint* getIndices(GLuint height, GLuint width) {
     if(!indices) {
-        initIndices(width, height);
+        initIndices(height, width);
     }
 
     return indices;
@@ -153,6 +181,14 @@ void GLWidget::initializeGL()
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_MULTISAMPLE);
+
+    GLuint height = 10;
+    GLuint width = 10;
+    initVertices(height, width);
+    initIndices(height, width);
+    verticesCount = getVerticesCount(height, width);
+    indicesCount = getIndicesCount(height, width);
+    transform(vertices, vertices, verticesCount, half);
 }
 
 void GLWidget::paintGL()
@@ -227,12 +263,10 @@ void GLWidget::paintGL()
     // glDrawElements(GL_TRIANGLE_STRIP, 3, GL_UNSIGNED_INT, indices);
     // glDisableClientState(GL_VERTEX_ARRAY);
 
-    GLuint width = 10;
-    GLuint height = 10;
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, getVertices(width, height));
-    glDrawElements(GL_TRIANGLE_STRIP, getIndicesCount(width, height), GL_UNSIGNED_INT, getIndices(width, height));
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glDrawElements(GL_TRIANGLE_STRIP, indicesCount, GL_UNSIGNED_INT, indices);
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 

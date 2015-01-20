@@ -62,4 +62,14 @@ protected:
     void resizeGL(int width, int height);
 };
 
+class Coordinate
+{
+ public:
+    Coordinate(GLfloat xc, GLfloat yc, GLfloat zc);
+
+    GLfloat x;
+    GLfloat y;
+    GLfloat z;
+};
+
 #endif
