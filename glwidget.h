@@ -45,6 +45,41 @@
 
 class QtLogo;
 
+class Coordinate
+{
+public:
+    Coordinate(GLfloat xc, GLfloat yc, GLfloat zc);
+
+    GLfloat x;
+    GLfloat y;
+    GLfloat z;
+};
+
+class Grid
+{
+public:
+    Grid(int h, int w);
+    ~Grid();
+    GLfloat* getVertices();
+    GLuint* getIndices();
+    GLuint getVerticesCount();
+    GLuint getIndicesCount();
+    void transform(Coordinate fn(Coordinate));
+    static Coordinate unity(Coordinate coord);
+    static Coordinate half(Coordinate coord);
+
+    GLuint height;
+    GLuint width;
+    GLuint verticesCount;
+    GLuint indicesCount;
+    GLfloat* vertices;
+    GLuint* indices;
+
+private:
+    void initVertices();
+    void initIndices();
+};
+
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -56,20 +91,12 @@ public:
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
 
+    Grid grid;
+
 protected:
     void initializeGL();
     void paintGL();
     void resizeGL(int width, int height);
-};
-
-class Coordinate
-{
- public:
-    Coordinate(GLfloat xc, GLfloat yc, GLfloat zc);
-
-    GLfloat x;
-    GLfloat y;
-    GLfloat z;
 };
 
 #endif

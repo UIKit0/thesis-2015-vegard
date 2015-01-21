@@ -166,6 +166,7 @@ DIST          = ../../../../Qt/5.4/clang_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.4/clang_64/mkspecs/features/qt_config.prf \
 		../../../../Qt/5.4/clang_64/mkspecs/macx-clang/qmake.conf \
 		../../../../Qt/5.4/clang_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../../Qt/5.4/clang_64/mkspecs/features/exclusive_builds.prf \
 		../../../../Qt/5.4/clang_64/mkspecs/features/default_pre.prf \
 		../../../../Qt/5.4/clang_64/mkspecs/features/mac/default_pre.prf \
@@ -340,6 +341,7 @@ Makefile: hellogl.pro ../../../../Qt/5.4/clang_64/mkspecs/macx-clang/qmake.conf 
 		../../../../Qt/5.4/clang_64/mkspecs/features/qt_config.prf \
 		../../../../Qt/5.4/clang_64/mkspecs/macx-clang/qmake.conf \
 		../../../../Qt/5.4/clang_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../../Qt/5.4/clang_64/mkspecs/features/exclusive_builds.prf \
 		../../../../Qt/5.4/clang_64/mkspecs/features/default_pre.prf \
 		../../../../Qt/5.4/clang_64/mkspecs/features/mac/default_pre.prf \
@@ -473,6 +475,7 @@ Makefile: hellogl.pro ../../../../Qt/5.4/clang_64/mkspecs/macx-clang/qmake.conf 
 ../../../../Qt/5.4/clang_64/mkspecs/features/qt_config.prf:
 ../../../../Qt/5.4/clang_64/mkspecs/macx-clang/qmake.conf:
 ../../../../Qt/5.4/clang_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../../../Qt/5.4/clang_64/mkspecs/features/exclusive_builds.prf:
 ../../../../Qt/5.4/clang_64/mkspecs/features/default_pre.prf:
 ../../../../Qt/5.4/clang_64/mkspecs/features/mac/default_pre.prf:
@@ -582,7 +585,11 @@ compiler_clean: compiler_moc_header_clean
 
 ####### Compile
 
-glwidget.o: glwidget.cpp ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers/QtWidgets \
+glwidget.o: glwidget.cpp ../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QTextStream \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qtextstream.h \
+		../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers/QtWidgets \
 		../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers/complexwidgets.h \
 		../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers/itemviews.h \
 		../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers/qaccessiblemenu.h \
@@ -880,7 +887,18 @@ window.o: window.cpp ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Version
 		../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o window.o window.cpp
 
-qtlogo.o: qtlogo.cpp 
+qtlogo.o: qtlogo.cpp qtlogo.h \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QObject \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qobject.h \
+		../../../../Qt/5.4/clang_64/lib/QtGui.framework/Versions/5/Headers/QColor \
+		../../../../Qt/5.4/clang_64/lib/QtGui.framework/Versions/5/Headers/qcolor.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/QGLWidget \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qgl.h \
+		../../../../Qt/5.4/clang_64/lib/QtGui.framework/Versions/5/Headers/QMatrix4x4 \
+		../../../../Qt/5.4/clang_64/lib/QtGui.framework/Versions/5/Headers/qmatrix4x4.h \
+		../../../../Qt/5.4/clang_64/lib/QtGui.framework/Versions/5/Headers/QVector3D \
+		../../../../Qt/5.4/clang_64/lib/QtGui.framework/Versions/5/Headers/qvector3d.h \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qmath.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qtlogo.o qtlogo.cpp
 
 moc_glwidget.o: moc_glwidget.cpp 
