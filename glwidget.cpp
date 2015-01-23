@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 #include <iostream>
+#include <cmath>
 #include <QDebug>
 #include <QTextStream>
 
@@ -53,8 +54,25 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
-Coordinate::Coordinate(GLfloat xc, GLfloat yc, GLfloat zc)
-    : x(xc), y(yc), z(zc)
+Coord::Coord(GLfloat xc, GLfloat yc)
+    : x(xc), y(yc)
+{
+}
+
+PolarCoord Coord::toPolarCoord() {
+    GLfloat r = sqrt(x * x + y * y);
+    GLfloat theta = atan2(y, x);
+    return PolarCoord(r, theta);
+}
+
+Coord PolarCoord::toCoord() {
+    GLfloat x = r * cos(theta);
+    GLfloat y = r * sin(theta);
+    return Coord(x, y);
+}
+
+PolarCoord::PolarCoord(GLfloat rc, GLfloat thetac)
+    : r(rc), theta(thetac)
 {
 }
 
@@ -113,10 +131,6 @@ void Grid::initIndices() {
             }
         }
     }
-
-    // if((mHeight & 1) && mHeight > 2) {
-    //     mpIndices[i++] = (mHeight-1) * mWidth;
-    // }
 }
 
 GLfloat* Grid::getVertices() {
@@ -127,26 +141,37 @@ GLuint* Grid::getIndices() {
     return indices;
 }
 
-void Grid::transform(Coordinate fn(Coordinate)) {
+void Grid::transform(Coord fn(Coord)) {
     int len = getVerticesCount();
     for(int i = 0; i < len; i += 3) {
-        Coordinate coord(vertices[i], vertices[i + 1], vertices[i + 2]);
+        Coord coord(vertices[i], vertices[i + 1]);
         coord = fn(coord);
         vertices[i]     = coord.x;
         vertices[i + 1] = coord.y;
-        vertices[i + 2] = coord.z;
+        vertices[i + 2] = 0.0;
     }
 }
 
-Coordinate Grid::unity(Coordinate coord) {
+Coord Grid::unity(Coord coord) {
     return coord;
 }
 
-Coordinate Grid::half(Coordinate coord) {
+Coord Grid::half(Coord coord) {
     coord.x = coord.x / 2;
     coord.y = coord.y / 2;
-    coord.z = coord.z / 2;
     return coord;
+}
+
+Coord Grid::fish(Coord coord) {
+    GLuint h = 10;
+    GLuint w = 10;
+    Coord c = Coord(coord.x - w / 2, coord.y - h / 2);
+    PolarCoord p = c.toPolarCoord();
+    // GLfloat rr = p.r + 0.1 * p.r * p.r;
+    GLfloat rr = p.r - 0.05 * p.r * p.r;
+    PolarCoord pp = PolarCoord(rr, p.theta);
+    Coord cc = pp.toCoord();
+    return Coord(cc.x + w / 2, cc.y + h / 2);
 }
 
 GLWidget::GLWidget(QWidget *parent)
@@ -178,7 +203,8 @@ void GLWidget::initializeGL()
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_MULTISAMPLE);
-    grid.transform(Grid::half);
+    // grid.transform(Grid::half);
+    grid.transform(Grid::fish);
 }
 
 void GLWidget::paintGL()

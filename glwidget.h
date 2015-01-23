@@ -45,14 +45,26 @@
 
 class QtLogo;
 
-class Coordinate
+class PolarCoord;
+
+class Coord
 {
 public:
-    Coordinate(GLfloat xc, GLfloat yc, GLfloat zc);
+    Coord(GLfloat xc, GLfloat yc);
+    PolarCoord toPolarCoord();
 
     GLfloat x;
     GLfloat y;
-    GLfloat z;
+};
+
+class PolarCoord
+{
+public:
+    PolarCoord(GLfloat rc, GLfloat thetac);
+    Coord toCoord();
+
+    GLfloat r;
+    GLfloat theta;
 };
 
 class Grid
@@ -64,9 +76,10 @@ public:
     GLuint* getIndices();
     GLuint getVerticesCount();
     GLuint getIndicesCount();
-    void transform(Coordinate fn(Coordinate));
-    static Coordinate unity(Coordinate coord);
-    static Coordinate half(Coordinate coord);
+    void transform(Coord fn(Coord));
+    static Coord unity(Coord coord);
+    static Coord half(Coord coord);
+    static Coord fish(Coord coord);
 
     GLuint height;
     GLuint width;
