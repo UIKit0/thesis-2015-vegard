@@ -101,9 +101,14 @@ public:
     GLWidget(QWidget *parent = 0);
     ~GLWidget();
 
+    GLuint loadShader(GLenum type, const char *shaderSrc);
+    GLuint loadShaderFromResource(GLenum type, QString resource);
+    void createProgram();
+
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
 
+    GLuint program;
     Grid grid;
 
 protected:

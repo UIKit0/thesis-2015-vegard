@@ -178,6 +178,7 @@ GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
       grid(10, 10)
 {
+    program = 0;
 }
 
 GLWidget::~GLWidget()
@@ -194,8 +195,111 @@ QSize GLWidget::sizeHint() const
     return QSize(400, 400);
 }
 
+GLuint GLWidget::loadShader(GLenum type, const char *shaderSrc)
+{
+    GLuint shader;
+    GLint compiled;
+
+    // Create the shader object
+    shader = glCreateShader(type);
+
+    if(shader == 0) {
+        return 0;
+    }
+
+    // Load the shader source
+    glShaderSource(shader, 1, &shaderSrc, NULL);
+
+    // Compile the shader
+    glCompileShader(shader);
+
+    // Check the compile status
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+
+    if(!compiled) {
+        GLint infoLen = 0;
+
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
+
+        if(infoLen > 1) {
+            qWarning() << "Error compiling shader";
+
+            // char* infoLog = malloc(sizeof(char) * infoLen);
+
+            // glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
+            // esLogMessage("Error compiling shader:\n%s\n", infoLog);
+
+            // free(infoLog);
+        }
+
+        glDeleteShader(shader);
+        return 0;
+    }
+
+    return shader;
+}
+
+GLuint GLWidget::loadShaderFromResource(GLenum type, QString resource)
+{
+    QFile shader(resource);
+    shader.open(QIODevice::ReadOnly);
+    QByteArray glsl = shader.readAll();
+    shader.close();
+    return loadShader(type, glsl.data());
+}
+
+void GLWidget::createProgram()
+{
+    GLint linked = 0;
+
+    // Create the program object
+    program = glCreateProgram();
+
+    if(program == 0) {
+        return;
+    }
+
+    GLuint vertexShader = loadShaderFromResource(GL_VERTEX_SHADER, ":/vshader.glsl");
+
+    glAttachShader(program, vertexShader);
+
+    // Link the program
+    glLinkProgram(program);
+
+    // Check the link status
+    glGetProgramiv(program, GL_LINK_STATUS, &linked);
+
+    if(!linked) {
+        GLint infoLen = 0;
+
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLen);
+
+        if(infoLen > 1) {
+            qWarning() << "Error linking program";
+
+            // char* infoLog = malloc(sizeof(char) * infoLen);
+            // glGetProgramInfoLog(program, infoLen, NULL, infoLog);
+
+            // esLogMessage("Error linking program:\n%s\n", infoLog);
+            // free(infoLog);
+        }
+
+        glDeleteProgram(program);
+    }
+}
+
 void GLWidget::initializeGL()
 {
+    createProgram();
+    // GLuint shader = loadShaderFromResource(GL_VERTEX_SHADER, ":/vshader.glsl");
+    // QFile shader(":/vshader.glsl");
+    // shader.open(QIODevice::ReadOnly);
+    // QByteArray glsl = shader.readAll();
+    // shader.close();
+    // qWarning() << shader.exists();
+    // qWarning() << glsl.isEmpty();
+    // qWarning() << glsl.data();
+    // qWarning() << shader;
     QColor qtBlack = Qt::black;
     qglClearColor(qtBlack);
     glEnable(GL_DEPTH_TEST);
@@ -205,6 +309,7 @@ void GLWidget::initializeGL()
     glEnable(GL_MULTISAMPLE);
     // grid.transform(Grid::half);
     grid.transform(Grid::fish);
+    glUseProgram(program);
 }
 
 void GLWidget::paintGL()

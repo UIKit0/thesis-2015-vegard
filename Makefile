@@ -51,12 +51,14 @@ OBJECTS_DIR   = ./
 SOURCES       = glwidget.cpp \
 		main.cpp \
 		window.cpp \
-		qtlogo.cpp moc_glwidget.cpp \
+		qtlogo.cpp qrc_shaders.cpp \
+		moc_glwidget.cpp \
 		moc_window.cpp
 OBJECTS       = glwidget.o \
 		main.o \
 		window.o \
 		qtlogo.o \
+		qrc_shaders.o \
 		moc_glwidget.o \
 		moc_window.o
 DIST          = ../../../../Qt/5.4/clang_64/mkspecs/features/spec_pre.prf \
@@ -363,6 +365,7 @@ Makefile: hellogl.pro ../../../../Qt/5.4/clang_64/mkspecs/macx-clang/qmake.conf 
 		../../../../Qt/5.4/clang_64/mkspecs/features/yacc.prf \
 		../../../../Qt/5.4/clang_64/mkspecs/features/lex.prf \
 		hellogl.pro \
+		shaders.qrc \
 		/Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/QtOpenGL.prl \
 		/Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/QtWidgets.prl \
 		/Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/QtGui.prl \
@@ -497,6 +500,7 @@ Makefile: hellogl.pro ../../../../Qt/5.4/clang_64/mkspecs/macx-clang/qmake.conf 
 ../../../../Qt/5.4/clang_64/mkspecs/features/yacc.prf:
 ../../../../Qt/5.4/clang_64/mkspecs/features/lex.prf:
 hellogl.pro:
+shaders.qrc:
 /Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/QtOpenGL.prl:
 /Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/QtWidgets.prl:
 /Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/QtGui.prl:
@@ -530,6 +534,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
+	$(COPY_FILE) --parents shaders.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents glwidget.h window.h qtlogo.h $(DISTDIR)/
 	$(COPY_FILE) --parents glwidget.cpp main.cpp window.cpp qtlogo.cpp $(DISTDIR)/
 
@@ -554,8 +559,13 @@ check: first
 
 compiler_objective_c_make_all:
 compiler_objective_c_clean:
-compiler_rcc_make_all:
+compiler_rcc_make_all: qrc_shaders.cpp
 compiler_rcc_clean:
+	-$(DEL_FILE) qrc_shaders.cpp
+qrc_shaders.cpp: shaders.qrc \
+		vshader.glsl
+	/Users/vegard/Qt/5.4/clang_64/bin/rcc -name shaders shaders.qrc -o qrc_shaders.cpp
+
 compiler_moc_header_make_all: moc_glwidget.cpp moc_window.cpp
 compiler_moc_header_clean:
 	-$(DEL_FILE) moc_glwidget.cpp moc_window.cpp
@@ -581,7 +591,7 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_header_clean 
+compiler_clean: compiler_rcc_clean compiler_moc_header_clean 
 
 ####### Compile
 
@@ -900,6 +910,9 @@ qtlogo.o: qtlogo.cpp qtlogo.h \
 		../../../../Qt/5.4/clang_64/lib/QtGui.framework/Versions/5/Headers/qvector3d.h \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qmath.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qtlogo.o qtlogo.cpp
+
+qrc_shaders.o: qrc_shaders.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_shaders.o qrc_shaders.cpp
 
 moc_glwidget.o: moc_glwidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_glwidget.o moc_glwidget.cpp

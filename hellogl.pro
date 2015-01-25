@@ -8,6 +8,8 @@ SOURCES       = glwidget.cpp \
                 main.cpp \
                 window.cpp \
                 qtlogo.cpp
+RESOURCES    += shaders.qrc
+OTHER_FILES  += vshader.glsl
 QT           += opengl widgets
 
 # install

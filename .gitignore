@@ -3,5 +3,6 @@
 .obj
 .qmake.*
 moc_*
+qrc_*
 *.o
 *.app
