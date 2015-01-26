@@ -563,7 +563,8 @@ compiler_rcc_make_all: qrc_shaders.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_shaders.cpp
 qrc_shaders.cpp: shaders.qrc \
-		vshader.glsl
+		vshader.glsl \
+		fshader.glsl
 	/Users/vegard/Qt/5.4/clang_64/bin/rcc -name shaders shaders.qrc -o qrc_shaders.cpp
 
 compiler_moc_header_make_all: moc_glwidget.cpp moc_window.cpp

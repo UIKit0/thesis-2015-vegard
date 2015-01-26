@@ -77,6 +77,7 @@ PolarCoord::PolarCoord(GLfloat rc, GLfloat thetac)
 }
 
 // http://stackoverflow.com/questions/5915753/generate-a-plane-with-triangle-strips
+
 Grid::Grid(int h, int w) {
     height = h;
     width = w;
@@ -100,14 +101,25 @@ GLuint Grid::getIndicesCount() {
     return (height * width) + (width - 1) * (height - 2);
 }
 
+// Indices for drawing cube faces using triangle strips.
+// Triangle strips can be connected by duplicating indices
+// between the strips. If connecting strips have opposite
+// vertex order then last index of the first strip and first
+// index of the second strip needs to be duplicated. If
+// connecting strips have same vertex order then only last
+// index of the first strip needs to be duplicated.
 void Grid::initVertices() {
     vertices = new GLfloat[getVerticesCount()];
     GLuint i = 0;
 
     for(GLuint row = 0; row < height; row++) {
         for(GLuint col = 0; col < width; col++) {
-            vertices[i++] = (GLfloat)col;
-            vertices[i++] = (GLfloat)row;
+            GLfloat h = height - 1;
+            GLfloat w = width - 1;
+            GLfloat r = (row - h / 2.0) / h;
+            GLfloat c = (col - w / 2.0) / w;
+            vertices[i++] = c;
+            vertices[i++] = r;
             vertices[i++] = 0.0f;
         }
     }
@@ -163,12 +175,12 @@ Coord Grid::half(Coord coord) {
 }
 
 Coord Grid::fish(Coord coord) {
-    GLuint h = 10;
-    GLuint w = 10;
+    GLuint h = 0;
+    GLuint w = 0;
     Coord c = Coord(coord.x - w / 2, coord.y - h / 2);
     PolarCoord p = c.toPolarCoord();
     // GLfloat rr = p.r + 0.1 * p.r * p.r;
-    GLfloat rr = p.r - 0.05 * p.r * p.r;
+    GLfloat rr = p.r - 0.5 * p.r * p.r;
     PolarCoord pp = PolarCoord(rr, p.theta);
     Coord cc = pp.toCoord();
     return Coord(cc.x + w / 2, cc.y + h / 2);
@@ -260,8 +272,10 @@ void GLWidget::createProgram()
     }
 
     GLuint vertexShader = loadShaderFromResource(GL_VERTEX_SHADER, ":/vshader.glsl");
+    GLuint fragmentShader = loadShaderFromResource(GL_FRAGMENT_SHADER, ":/fshader.glsl");
 
     glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
 
     // Link the program
     glLinkProgram(program);
@@ -307,7 +321,6 @@ void GLWidget::initializeGL()
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_MULTISAMPLE);
-    // grid.transform(Grid::half);
     grid.transform(Grid::fish);
     glUseProgram(program);
 }
@@ -315,19 +328,23 @@ void GLWidget::initializeGL()
 void GLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-    glTranslatef(0.0, 0.0, -10.0);
-    glRotatef(0, 1.0, 0.0, 0.0);
-    glRotatef(0, 0.0, 1.0, 0.0);
-    glRotatef(0, 0.0, 0.0, 1.0);
+    // glLoadIdentity();
+    // glTranslatef(0.0, 0.0, -10.0);
+    // glRotatef(0, 1.0, 0.0, 0.0);
+    // glRotatef(0, 0.0, 1.0, 0.0);
+    // glRotatef(0, 0.0, 0.0, 1.0);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, grid.vertices);
+    glEnableVertexAttribArray(0);
+    glDrawElements(GL_TRIANGLE_STRIP, grid.indicesCount, GL_UNSIGNED_INT, grid.indices);
 
     // qWarning() << grid.indicesCount;
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, grid.vertices);
-    glDrawElements(GL_TRIANGLE_STRIP, grid.indicesCount, GL_UNSIGNED_INT, grid.indices);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    // glEnableClientState(GL_VERTEX_ARRAY);
+    // glVertexPointer(3, GL_FLOAT, 0, grid.vertices);
+    // glDrawElements(GL_TRIANGLE_STRIP, grid.indicesCount, GL_UNSIGNED_INT, grid.indices);
+    // glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -335,12 +352,12 @@ void GLWidget::resizeGL(int width, int height)
     int side = qMin(width, height);
     glViewport((width - side) / 2, (height - side) / 2, side, side);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-#ifdef QT_OPENGL_ES_1
-    glOrthof(-1, +10, -1, +10, 4.0, 15.0);
-#else
-    glOrtho(-1, +10, -1, +10, 4.0, 15.0);
-#endif
-    glMatrixMode(GL_MODELVIEW);
+//     glMatrixMode(GL_PROJECTION);
+//     glLoadIdentity();
+// #ifdef QT_OPENGL_ES_1
+//     glOrthof(-1, +10, -1, +10, 4.0, 15.0);
+// #else
+//     glOrtho(-1, +10, -1, +10, 4.0, 15.0);
+// #endif
+//     glMatrixMode(GL_MODELVIEW);
 }
