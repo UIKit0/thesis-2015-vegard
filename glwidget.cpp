@@ -54,6 +54,29 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
+// map from Qt's ARGB endianness-dependent format to GL's big-endian RGBA layout
+static inline void qgl_byteSwapImage(QImage &img, GLenum pixel_type)
+{
+    const int width = img.width();
+    const int height = img.height();
+
+    if (pixel_type == GL_UNSIGNED_INT_8_8_8_8_REV
+        || (pixel_type == GL_UNSIGNED_BYTE && QSysInfo::ByteOrder == QSysInfo::LittleEndian))
+    {
+        for (int i = 0; i < height; ++i) {
+            uint *p = (uint *) img.scanLine(i);
+            for (int x = 0; x < width; ++x)
+                p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
+        }
+    } else {
+        for (int i = 0; i < height; ++i) {
+            uint *p = (uint *) img.scanLine(i);
+            for (int x = 0; x < width; ++x)
+                p[x] = (p[x] << 8) | ((p[x] >> 24) & 0xff);
+        }
+    }
+}
+
 Coord::Coord(GLfloat xc, GLfloat yc)
     : x(xc), y(yc)
 {
@@ -83,6 +106,7 @@ Grid::Grid(int h, int w) {
     width = w;
 
     initVertices();
+    initTexels();
     initIndices();
     verticesCount = getVerticesCount();
     indicesCount = getIndicesCount();
@@ -97,25 +121,22 @@ GLuint Grid::getVerticesCount() {
     return height * width * 3;
 }
 
+GLuint Grid::getTexelsCount() {
+    return height * width * 2;
+}
+
 GLuint Grid::getIndicesCount() {
     return (height * width) + (width - 1) * (height - 2);
 }
 
-// Indices for drawing cube faces using triangle strips.
-// Triangle strips can be connected by duplicating indices
-// between the strips. If connecting strips have opposite
-// vertex order then last index of the first strip and first
-// index of the second strip needs to be duplicated. If
-// connecting strips have same vertex order then only last
-// index of the first strip needs to be duplicated.
 void Grid::initVertices() {
     vertices = new GLfloat[getVerticesCount()];
     GLuint i = 0;
+    GLfloat h = height - 1;
+    GLfloat w = width - 1;
 
     for(GLuint row = 0; row < height; row++) {
         for(GLuint col = 0; col < width; col++) {
-            GLfloat h = height - 1;
-            GLfloat w = width - 1;
             GLfloat r = (row - h / 2.0) / h;
             GLfloat c = (col - w / 2.0) / w;
             vertices[i++] = c;
@@ -125,6 +146,28 @@ void Grid::initVertices() {
     }
 }
 
+void Grid::initTexels() {
+    texels = new GLfloat[getTexelsCount()];
+    GLuint i = 0;
+    GLfloat h = height - 1;
+    GLfloat w = width - 1;
+
+    for(GLuint row = 0; row < height; row++) {
+        for(GLuint col = 0; col < width; col++) {
+            GLfloat r = row / h;
+            GLfloat c = col / w;
+            texels[i++] = c;
+            texels[i++] = r;
+        }
+    }
+}
+
+// Indices for drawing cube faces using triangle strips. Triangle
+// strips can be connected by duplicating indices between the strips.
+// If connecting strips have opposite vertex order, then the last
+// index of the first strip and the first index of the second strip
+// need to be duplicated. If connecting strips have same vertex order,
+// then only the last index of the first strip needs to be duplicated.
 void Grid::initIndices() {
     GLuint iSize = getIndicesCount();
     indices = new GLuint[iSize];
@@ -139,7 +182,7 @@ void Grid::initIndices() {
         } else { // odd rows
             for(GLuint col = width - 1; col > 0; col--) {
                 indices[i++] = col + (row + 1) * width;
-                indices[i++] = col - 1 + + row * width;
+                indices[i++] = (col - 1) + row * width;
             }
         }
     }
@@ -147,6 +190,10 @@ void Grid::initIndices() {
 
 GLfloat* Grid::getVertices() {
     return vertices;
+}
+
+GLfloat* Grid::getTexels() {
+    return texels;
 }
 
 GLuint* Grid::getIndices() {
@@ -161,6 +208,16 @@ void Grid::transform(Coord fn(Coord)) {
         vertices[i]     = coord.x;
         vertices[i + 1] = coord.y;
         vertices[i + 2] = 0.0;
+    }
+}
+
+void Grid::iTransform(Coord fn(Coord)) {
+    int len = getTexelsCount();
+    for(int i = 0; i < len; i += 2) {
+        Coord coord(texels[i], texels[i + 1]);
+        coord = fn(coord);
+        texels[i]     = coord.x;
+        texels[i + 1] = coord.y;
     }
 }
 
@@ -234,14 +291,10 @@ GLuint GLWidget::loadShader(GLenum type, const char *shaderSrc)
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
 
         if(infoLen > 1) {
-            qWarning() << "Error compiling shader";
-
-            // char* infoLog = malloc(sizeof(char) * infoLen);
-
-            // glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
-            // esLogMessage("Error compiling shader:\n%s\n", infoLog);
-
-            // free(infoLog);
+            char* infoLog = new char[infoLen];
+            glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
+            qWarning() << "Error compiling shader: " << infoLog;
+            delete[] infoLog;
         }
 
         glDeleteShader(shader);
@@ -289,13 +342,10 @@ void GLWidget::createProgram()
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLen);
 
         if(infoLen > 1) {
-            qWarning() << "Error linking program";
-
-            // char* infoLog = malloc(sizeof(char) * infoLen);
-            // glGetProgramInfoLog(program, infoLen, NULL, infoLog);
-
-            // esLogMessage("Error linking program:\n%s\n", infoLog);
-            // free(infoLog);
+            char* infoLog = new char[infoLen];
+            glGetProgramInfoLog(program, infoLen, NULL, infoLog);
+            qWarning() << "Error linking program: " << infoLog;
+            delete[] infoLog;
         }
 
         glDeleteProgram(program);
@@ -323,6 +373,66 @@ void GLWidget::initializeGL()
     glEnable(GL_MULTISAMPLE);
     grid.transform(Grid::fish);
     glUseProgram(program);
+
+    // Texture object handle
+    GLuint textureId;
+
+    // Use tightly packed data
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    // Generate a texture object
+    glGenTextures(1, &textureId);
+
+    // Bind the texture object
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    // 2 x 2 Image, 3 bytes per pixel (R, G, B)
+    // GLubyte pixels[4 * 3] =
+    //     {
+    //         255, 0, 0,  // Red
+    //         0, 255, 0,  // Green
+    //         0, 0, 255,  // Blue
+    //         255, 255, 0 // Yellow
+    //     };
+    //
+    // Load the texture
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB,
+    //              GL_UNSIGNED_BYTE, pixels);
+
+    QImage testImage(":/test.png");
+    testImage = testImage.mirrored();
+    qgl_byteSwapImage(testImage, GL_UNSIGNED_BYTE);
+
+    // Load the texture
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 testImage.height(), testImage.width(),
+                 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 testImage.constBits());
+
+    // Set the filtering mode
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    GL_LINEAR);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+    //                 GL_MIRRORED_REPEAT);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R,
+    //                 GL_MIRRORED_REPEAT);
+
+    // Get the sampler locations
+    GLuint samplerLoc = glGetUniformLocation(program, "s_texture");
+
+    // Bind the texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    // Set the sampler texture unit to 0
+    glUniform1i(samplerLoc, 0);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, grid.texels);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, grid.vertices);
+    glEnableVertexAttribArray(1);
 }
 
 void GLWidget::paintGL()
@@ -334,9 +444,7 @@ void GLWidget::paintGL()
     // glRotatef(0, 0.0, 1.0, 0.0);
     // glRotatef(0, 0.0, 0.0, 1.0);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, grid.vertices);
-    glEnableVertexAttribArray(0);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLE_STRIP, grid.indicesCount, GL_UNSIGNED_INT, grid.indices);
 
     // qWarning() << grid.indicesCount;

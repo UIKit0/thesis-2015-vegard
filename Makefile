@@ -52,6 +52,7 @@ SOURCES       = glwidget.cpp \
 		main.cpp \
 		window.cpp \
 		qtlogo.cpp qrc_shaders.cpp \
+		qrc_textures.cpp \
 		moc_glwidget.cpp \
 		moc_window.cpp
 OBJECTS       = glwidget.o \
@@ -59,6 +60,7 @@ OBJECTS       = glwidget.o \
 		window.o \
 		qtlogo.o \
 		qrc_shaders.o \
+		qrc_textures.o \
 		moc_glwidget.o \
 		moc_window.o
 DIST          = ../../../../Qt/5.4/clang_64/mkspecs/features/spec_pre.prf \
@@ -366,6 +368,7 @@ Makefile: hellogl.pro ../../../../Qt/5.4/clang_64/mkspecs/macx-clang/qmake.conf 
 		../../../../Qt/5.4/clang_64/mkspecs/features/lex.prf \
 		hellogl.pro \
 		shaders.qrc \
+		textures.qrc \
 		/Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/QtOpenGL.prl \
 		/Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/QtWidgets.prl \
 		/Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/QtGui.prl \
@@ -501,6 +504,7 @@ Makefile: hellogl.pro ../../../../Qt/5.4/clang_64/mkspecs/macx-clang/qmake.conf 
 ../../../../Qt/5.4/clang_64/mkspecs/features/lex.prf:
 hellogl.pro:
 shaders.qrc:
+textures.qrc:
 /Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/QtOpenGL.prl:
 /Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/QtWidgets.prl:
 /Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/QtGui.prl:
@@ -534,7 +538,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents shaders.qrc $(DISTDIR)/
+	$(COPY_FILE) --parents shaders.qrc textures.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents glwidget.h window.h qtlogo.h $(DISTDIR)/
 	$(COPY_FILE) --parents glwidget.cpp main.cpp window.cpp qtlogo.cpp $(DISTDIR)/
 
@@ -559,13 +563,17 @@ check: first
 
 compiler_objective_c_make_all:
 compiler_objective_c_clean:
-compiler_rcc_make_all: qrc_shaders.cpp
+compiler_rcc_make_all: qrc_shaders.cpp qrc_textures.cpp
 compiler_rcc_clean:
-	-$(DEL_FILE) qrc_shaders.cpp
+	-$(DEL_FILE) qrc_shaders.cpp qrc_textures.cpp
 qrc_shaders.cpp: shaders.qrc \
 		vshader.glsl \
 		fshader.glsl
 	/Users/vegard/Qt/5.4/clang_64/bin/rcc -name shaders shaders.qrc -o qrc_shaders.cpp
+
+qrc_textures.cpp: textures.qrc \
+		test.png
+	/Users/vegard/Qt/5.4/clang_64/bin/rcc -name textures textures.qrc -o qrc_textures.cpp
 
 compiler_moc_header_make_all: moc_glwidget.cpp moc_window.cpp
 compiler_moc_header_clean:
@@ -914,6 +922,9 @@ qtlogo.o: qtlogo.cpp qtlogo.h \
 
 qrc_shaders.o: qrc_shaders.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_shaders.o qrc_shaders.cpp
+
+qrc_textures.o: qrc_textures.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_textures.o qrc_textures.cpp
 
 moc_glwidget.o: moc_glwidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_glwidget.o moc_glwidget.cpp

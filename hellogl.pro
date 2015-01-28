@@ -8,7 +8,8 @@ SOURCES       = glwidget.cpp \
                 main.cpp \
                 window.cpp \
                 qtlogo.cpp
-RESOURCES    += shaders.qrc
+RESOURCES    += shaders.qrc \
+                textures.qrc
 OTHER_FILES  += fshader.glsl \
                 vshader.glsl
 QT           += opengl widgets

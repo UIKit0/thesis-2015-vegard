@@ -73,10 +73,13 @@ public:
     Grid(int h, int w);
     ~Grid();
     GLfloat* getVertices();
+    GLfloat* getTexels();
     GLuint* getIndices();
     GLuint getVerticesCount();
+    GLuint getTexelsCount();
     GLuint getIndicesCount();
     void transform(Coord fn(Coord));
+    void iTransform(Coord fn(Coord));
     static Coord unity(Coord coord);
     static Coord half(Coord coord);
     static Coord fish(Coord coord);
@@ -86,10 +89,12 @@ public:
     GLuint verticesCount;
     GLuint indicesCount;
     GLfloat* vertices;
+    GLfloat* texels;
     GLuint* indices;
 
 private:
     void initVertices();
+    void initTexels();
     void initIndices();
 };
 
