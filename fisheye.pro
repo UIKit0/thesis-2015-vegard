@@ -3,20 +3,20 @@ INCLUDEPATH += ../shared
 
 HEADERS       = glwidget.h \
                 window.h \
-                qtlogo.h
+                coord.h \
+                functor.h \
+                grid.h
 SOURCES       = glwidget.cpp \
                 main.cpp \
                 window.cpp \
-                qtlogo.cpp
+                coord.cpp \
+                functor.cpp \
+                grid.cpp
 RESOURCES    += shaders.qrc \
                 textures.qrc
 OTHER_FILES  += fshader.glsl \
                 vshader.glsl
 QT           += opengl widgets
-
-# install
-target.path = $$[QT_INSTALL_EXAMPLES]/opengl/hellogl
-INSTALLS += target
 
 contains(QT_CONFIG, opengles.) {
     contains(QT_CONFIG, angle): \
