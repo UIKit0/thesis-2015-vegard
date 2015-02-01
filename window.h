@@ -11,6 +11,9 @@ class QSlider;
 QT_END_NAMESPACE
 class GLWidget;
 
+/**
+ * Window class.
+ */
 class Window : public QWidget
 {
     Q_OBJECT

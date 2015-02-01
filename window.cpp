@@ -1,5 +1,8 @@
 #include "window.h"
 
+/**
+ * Create a window for the widget.
+ */
 Window::Window()
 {
     glWidget = new GLWidget;
