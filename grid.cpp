@@ -1,5 +1,7 @@
 #include "grid.h"
 
+#include <QDebug>
+
 /**
  * Create a grid mesh.
  * @param h height.
@@ -112,13 +114,14 @@ void Grid::initVertices() {
     GLuint i = 0;
     GLfloat h = height - 1;
     GLfloat w = width - 1;
+    Shift shift(-w / 2.0, -h / 2.0);
+    Scale scale(1 / w, 1 / h);
 
     for(GLuint row = 0; row < height; row++) {
         for(GLuint col = 0; col < width; col++) {
-            GLfloat r = (row - h / 2.0) / h;
-            GLfloat c = (col - w / 2.0) / w;
-            vertices[i++] = c;
-            vertices[i++] = r;
+            Coord coord = scale(shift(Coord(col, row)));
+            vertices[i++] = coord.x;
+            vertices[i++] = coord.y;
             vertices[i++] = 0.0f;
         }
     }
@@ -132,13 +135,13 @@ void Grid::initTexels() {
     GLuint i = 0;
     GLfloat h = height - 1;
     GLfloat w = width - 1;
+    Scale scale(1 / w, 1 / h);
 
     for(GLuint row = 0; row < height; row++) {
         for(GLuint col = 0; col < width; col++) {
-            GLfloat r = row / h;
-            GLfloat c = col / w;
-            texels[i++] = c;
-            texels[i++] = r;
+            Coord coord = scale(Coord(col, row));
+            texels[i++] = coord.x;
+            texels[i++] = coord.y;
         }
     }
 }

@@ -76,7 +76,8 @@ void GLWidget::initializeGL()
     Fish fn1;
     FishInverse fn2;
     Combinator fn3(fn1, fn2);
-    grid.transform(fn1);
+    Homography fisheye(fn1, fn2);
+    grid.transform(fisheye.inverse);
     // grid.transform(fn2);
     // grid.transform(fn3);
     // grid.transform(fn1.chain(fn2));

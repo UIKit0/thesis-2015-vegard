@@ -53,16 +53,69 @@ private:
 };
 
 /**
+ * Bijective functor.
+ */
+class Homography : public Functor
+{
+public:
+    Homography(const Functor &fn, const Functor &inv)
+        : apply(fn), inverse(inv) { };
+
+    virtual Coord operator()(Coord input) const {
+        return apply(input);
+    };
+
+    const Functor &apply;
+    const Functor &inverse;
+};
+
+/**
+ * Scale a coordinate by a factor.
+ */
+class Scale : public Functor
+{
+public:
+    Scale(float f)
+        : xfactor(f), yfactor(f) { };
+    Scale(float x, float y)
+        : xfactor(x), yfactor(y) { };
+    virtual Coord operator()(Coord input) const {
+        return Coord(input.x * xfactor, input.y * yfactor);
+    };
+    float xfactor;
+    float yfactor;
+};
+
+/**
+ * Shift a coordinate by an offset.
+ */
+class Shift : public Functor
+{
+public:
+    Shift(float f)
+        : xoffset(f), yoffset(f) { };
+    Shift(float x, float y)
+        : xoffset(x), yoffset(y) { };
+    virtual Coord operator()(Coord input) const {
+        return Coord(input.x + xoffset, input.y + yoffset);
+    };
+    float xoffset;
+    float yoffset;
+};
+
+/**
  * Transform vertex positions in the range [-0.5, 0.5] to
  * texture coordinates in the range [0, 1].
  */
 class PosToTexCoord : public Functor
 {
 public:
-    PosToTexCoord() { };
+    PosToTexCoord()
+        : shift(0.5) { };
     virtual Coord operator()(Coord input) const {
-        return Coord(input.x + 0.5, input.y + 0.5);
+        return shift(input);
     };
+    Shift shift;
 };
 
 /**
@@ -72,10 +125,12 @@ public:
 class TexCoordToPos : public Functor
 {
 public:
-    TexCoordToPos() { };
+    TexCoordToPos()
+        : shift(-0.5) { };
     virtual Coord operator()(Coord input) const {
-        return Coord(input.x - 0.5, input.y - 0.5);
+        return shift(input);
     };
+    Shift shift;
 };
 
 /**
@@ -106,4 +161,15 @@ public:
         PolarCoord pp = PolarCoord(rr, p.theta);
         return pp.toCoord();
     };
+};
+
+/**
+ * Fish-eye homography.
+ */
+class Fisheye : public Homography
+{
+public:
+    Fisheye() : Homography(apply, inverse) { };
+    Fish apply;
+    FishInverse inverse;
 };
