@@ -144,9 +144,11 @@ void GLWidget::initializeGL()
     glEnable(GL_MULTISAMPLE);
     Fish fn1;
     FishInverse fn2;
+    Combinator fn3(fn1, fn2);
     // grid.transform(fn1);
-    grid.transform(fn2);
-    // grid.transform(fn1.chain(fn2));
+    // grid.transform(fn2);
+    // grid.transform(fn3);
+    grid.transform(fn1.chain(fn2));
     glUseProgram(program);
 
     // Texture object handle

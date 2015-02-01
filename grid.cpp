@@ -99,7 +99,7 @@ GLuint* Grid::getIndices() {
     return indices;
 }
 
-void Grid::transform(Functor &fn) {
+void Grid::transform(const Functor &fn) {
     int len = getVerticesCount();
     for(int i = 0; i < len; i += 3) {
         Coord coord(vertices[i], vertices[i + 1]);
@@ -110,7 +110,7 @@ void Grid::transform(Functor &fn) {
     }
 }
 
-void Grid::iTransform(Functor &fn) {
+void Grid::iTransform(const Functor &fn) {
     int len = getTexelsCount();
     for(int i = 0; i < len; i += 2) {
         Coord coord(texels[i], texels[i + 1]);

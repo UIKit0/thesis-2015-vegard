@@ -11,8 +11,8 @@ public:
     GLuint getVerticesCount();
     GLuint getTexelsCount();
     GLuint getIndicesCount();
-    void transform(Functor &fn);
-    void iTransform(Functor &fn);
+    void transform(const Functor &fn);
+    void iTransform(const Functor &fn);
 
     GLuint height;
     GLuint width;
