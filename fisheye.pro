@@ -3,13 +3,13 @@ INCLUDEPATH += ../shared
 
 HEADERS       = glwidget.h \
                 window.h \
-                coord.h \
+                point.h \
                 functor.h \
                 grid.h
 SOURCES       = glwidget.cpp \
                 main.cpp \
                 window.cpp \
-                coord.cpp \
+                point.cpp \
                 functor.cpp \
                 grid.cpp
 RESOURCES    += shaders.qrc \

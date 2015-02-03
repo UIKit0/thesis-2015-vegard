@@ -1,6 +1,6 @@
-#include "coord.h"
+#include "point.h"
 
-Coord::Coord(GLfloat xc, GLfloat yc)
+Point::Point(GLfloat xc, GLfloat yc)
     : x(xc), y(yc)
 {
 }
@@ -8,13 +8,13 @@ Coord::Coord(GLfloat xc, GLfloat yc)
 /**
  * Convert to polar coordinates.
  */
-PolarCoord Coord::toPolarCoord() const {
+Polar Point::toPolar() const {
     GLfloat r = sqrt(x * x + y * y);
     GLfloat theta = atan2(y, x);
-    return PolarCoord(r, theta);
+    return Polar(r, theta);
 }
 
-PolarCoord::PolarCoord(GLfloat rc, GLfloat thetac)
+Polar::Polar(GLfloat rc, GLfloat thetac)
     : r(rc), theta(thetac)
 {
 }
@@ -22,8 +22,8 @@ PolarCoord::PolarCoord(GLfloat rc, GLfloat thetac)
 /**
  * Convert to cartesian coordinates.
  */
-Coord PolarCoord::toCoord() const {
+Point Polar::toPoint() const {
     GLfloat x = r * cos(theta);
     GLfloat y = r * sin(theta);
-    return Coord(x, y);
+    return Point(x, y);
 }

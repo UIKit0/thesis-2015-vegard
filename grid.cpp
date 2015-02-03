@@ -3,12 +3,20 @@
 #include <QDebug>
 
 /**
+ * Create an empty grid mesh.
+ */
+Grid::Grid()
+    : height(0), width(0), vertices(NULL), texels(NULL), indices(NULL)
+{
+};
+
+/**
  * Create a grid mesh.
  * @param h height.
  * @param h width.
  */
 Grid::Grid(int h, int w)
-    : height(h), width(w)
+    : height(h), width(w), vertices(NULL), texels(NULL), indices(NULL)
 {
     initVertices();
     initTexels();
@@ -16,9 +24,25 @@ Grid::Grid(int h, int w)
 }
 
 Grid::~Grid() {
-    delete[] vertices;
-    delete[] texels;
-    delete[] indices;
+}
+
+/**
+ * Resize the grid mesh.
+ * @param h height.
+ * @param h width.
+ */
+void Grid::resize(int h, int w)
+{
+    height = h;
+    width = w;
+
+    if(!height || !width) {
+        return;
+    }
+
+    initVertices();
+    initTexels();
+    initIndices();
 }
 
 /**
@@ -84,10 +108,10 @@ GLuint* Grid::getIndices() const {
 void Grid::transform(const Functor &fn) {
     int len = getVerticesCount();
     for(int i = 0; i < len; i += 3) {
-        Coord coord(vertices[i], vertices[i + 1]);
-        coord = fn(coord);
-        vertices[i]     = coord.x;
-        vertices[i + 1] = coord.y;
+        Point point(vertices[i], vertices[i + 1]);
+        point = fn(point);
+        vertices[i]     = point.x;
+        vertices[i + 1] = point.y;
         vertices[i + 2] = 0.0;
     }
 }
@@ -99,10 +123,10 @@ void Grid::transform(const Functor &fn) {
 void Grid::iTransform(const Functor &fn) {
     int len = getTexelsCount();
     for(int i = 0; i < len; i += 2) {
-        Coord coord(texels[i], texels[i + 1]);
-        coord = fn(coord);
-        texels[i]     = coord.x;
-        texels[i + 1] = coord.y;
+        Point point(texels[i], texels[i + 1]);
+        point = fn(point);
+        texels[i]     = point.x;
+        texels[i + 1] = point.y;
     }
 }
 
@@ -119,9 +143,9 @@ void Grid::initVertices() {
 
     for(GLuint row = 0; row < height; row++) {
         for(GLuint col = 0; col < width; col++) {
-            Coord coord = scale(shift(Coord(col, row)));
-            vertices[i++] = coord.x;
-            vertices[i++] = coord.y;
+            Point point = scale(shift(Point(col, row)));
+            vertices[i++] = point.x;
+            vertices[i++] = point.y;
             vertices[i++] = 0.0f;
         }
     }
@@ -139,9 +163,9 @@ void Grid::initTexels() {
 
     for(GLuint row = 0; row < height; row++) {
         for(GLuint col = 0; col < width; col++) {
-            Coord coord = scale(Coord(col, row));
-            texels[i++] = coord.x;
-            texels[i++] = coord.y;
+            Point point = scale(Point(col, row));
+            texels[i++] = point.x;
+            texels[i++] = point.y;
         }
     }
 }

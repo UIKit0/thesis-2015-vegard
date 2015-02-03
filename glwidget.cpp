@@ -35,7 +35,7 @@ static inline void qgl_byteSwapImage(QImage &img, GLenum pixel_type)
  */
 GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
-      grid(10, 10)
+      grid()
 {
     program = 0;
 }
@@ -65,6 +65,17 @@ QSize GLWidget::sizeHint() const
  */
 void GLWidget::initializeGL()
 {
+    QImage testImage(":/test.png");
+    testImage = testImage.mirrored();
+    qgl_byteSwapImage(testImage, GL_UNSIGNED_BYTE);
+
+    grid = Grid(10, 10);
+    // grid = Grid(testImage.height(), testImage.width());
+
+    Fisheye fisheye;
+    grid.transform(fisheye);
+    // grid.transform(fisheye.inverse);
+
     createProgram();
     QColor qtBlack = Qt::black;
     qglClearColor(qtBlack);
@@ -73,9 +84,6 @@ void GLWidget::initializeGL()
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_MULTISAMPLE);
-    Fisheye fisheye;
-    grid.transform(fisheye);
-    // grid.transform(fisheye.inverse);
     glUseProgram(program);
 
     // Texture object handle
@@ -89,10 +97,6 @@ void GLWidget::initializeGL()
 
     // Bind the texture object
     glBindTexture(GL_TEXTURE_2D, textureId);
-
-    QImage testImage(":/test.png");
-    testImage = testImage.mirrored();
-    qgl_byteSwapImage(testImage, GL_UNSIGNED_BYTE);
 
     // Load the texture
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,

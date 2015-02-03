@@ -6,8 +6,11 @@
 class Grid
 {
 public:
+    Grid();
     Grid(int h, int w);
     ~Grid();
+
+    void resize(int h, int w);
 
     GLuint getHeight() const;
     GLuint getWidth() const;

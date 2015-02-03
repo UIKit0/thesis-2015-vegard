@@ -1,16 +1,16 @@
 #include <QGLWidget>
 #include <cmath>
 
-class PolarCoord;
+class Polar;
 
 /**
  * Cartesian coordinates.
  */
-class Coord
+class Point
 {
 public:
-    Coord(GLfloat xc, GLfloat yc);
-    PolarCoord toPolarCoord() const;
+    Point(GLfloat xc, GLfloat yc);
+    Polar toPolar() const;
 
     GLfloat x;
     GLfloat y;
@@ -19,11 +19,11 @@ public:
 /**
  * Polar coordinates.
  */
-class PolarCoord
+class Polar
 {
 public:
-    PolarCoord(GLfloat rc, GLfloat thetac);
-    Coord toCoord() const;
+    Polar(GLfloat rc, GLfloat thetac);
+    Point toPoint() const;
 
     GLfloat r;
     GLfloat theta;

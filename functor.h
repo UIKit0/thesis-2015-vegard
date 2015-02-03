@@ -1,4 +1,4 @@
-#include "coord.h"
+#include "point.h"
 
 #include <QDebug>
 
@@ -15,7 +15,7 @@ public:
     /**
      * Unity transformation.
      */
-    virtual Coord operator()(Coord input) const {
+    virtual Point operator()(Point input) const {
         return input;
     };
 
@@ -45,7 +45,7 @@ public:
     /**
      * Combined transformation.
      */
-    virtual Coord operator()(Coord input) const {
+    virtual Point operator()(Point input) const {
         return functor2(functor1(input));
     };
 
@@ -62,7 +62,7 @@ class Homography : public Functor
 public:
     Homography() : apply(), inverse() { };
 
-    virtual Coord operator()(Coord input) const {
+    virtual Point operator()(Point input) const {
         return apply(input);
     };
 
@@ -80,8 +80,8 @@ public:
         : xfactor(f), yfactor(f) { };
     Scale(float x, float y)
         : xfactor(x), yfactor(y) { };
-    virtual Coord operator()(Coord input) const {
-        return Coord(input.x * xfactor, input.y * yfactor);
+    virtual Point operator()(Point input) const {
+        return Point(input.x * xfactor, input.y * yfactor);
     };
     float xfactor;
     float yfactor;
@@ -97,8 +97,8 @@ public:
         : xoffset(f), yoffset(f) { };
     Shift(float x, float y)
         : xoffset(x), yoffset(y) { };
-    virtual Coord operator()(Coord input) const {
-        return Coord(input.x + xoffset, input.y + yoffset);
+    virtual Point operator()(Point input) const {
+        return Point(input.x + xoffset, input.y + yoffset);
     };
     float xoffset;
     float yoffset;
@@ -111,9 +111,8 @@ public:
 class PosToTexCoord : public Functor
 {
 public:
-    PosToTexCoord()
-        : shift(0.5) { };
-    virtual Coord operator()(Coord input) const {
+    PosToTexCoord() : shift(0.5) { };
+    virtual Point operator()(Point input) const {
         return shift(input);
     };
     Shift shift;
@@ -126,9 +125,8 @@ public:
 class TexCoordToPos : public Functor
 {
 public:
-    TexCoordToPos()
-        : shift(-0.5) { };
-    virtual Coord operator()(Coord input) const {
+    TexCoordToPos() : shift(-0.5) { };
+    virtual Point operator()(Point input) const {
         return shift(input);
     };
     Shift shift;
@@ -141,11 +139,11 @@ class Fish : public Functor
 {
 public:
     Fish() { };
-    virtual Coord operator()(Coord input) const {
-        PolarCoord p = input.toPolarCoord();
+    virtual Point operator()(Point input) const {
+        Polar p = input.toPolar();
         GLfloat rr = p.r - 0.5 * p.r * p.r;
-        PolarCoord pp = PolarCoord(rr, p.theta);
-        return pp.toCoord();
+        Polar pp = Polar(rr, p.theta);
+        return pp.toPoint();
     };
 };
 
@@ -156,11 +154,11 @@ class FishInverse : public Functor
 {
 public:
     FishInverse() { };
-    virtual Coord operator()(Coord input) const {
-        PolarCoord p = input.toPolarCoord();
+    virtual Point operator()(Point input) const {
+        Polar p = input.toPolar();
         GLfloat rr = -sqrt(1 - 2 * p.r) + 1;
-        PolarCoord pp = PolarCoord(rr, p.theta);
-        return pp.toCoord();
+        Polar pp = Polar(rr, p.theta);
+        return pp.toPoint();
     };
 };
 
@@ -172,7 +170,7 @@ class Fisheye : public Homography
 public:
     Fisheye() : Homography(), apply(), inverse() { };
 
-    virtual Coord operator()(Coord input) const {
+    virtual Point operator()(Point input) const {
         return apply(input);
     };
 
