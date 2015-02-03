@@ -734,6 +734,8 @@ moc_glwidget.cpp: ../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/
 		grid.h \
 		functor.h \
 		coord.h \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
 		glwidget.h
 	/Users/vegard/Qt/5.4/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -I/Users/vegard/Qt/5.4/clang_64/mkspecs/macx-clang -I'/Users/vegard/Google Drive/Documents/master/fisheye' -I'/Users/vegard/Google Drive/Documents/master/shared' -I/Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtCore.framework/Headers -F/Users/vegard/Qt/5.4/clang_64/lib glwidget.h -o moc_glwidget.cpp
 
@@ -887,6 +889,8 @@ moc_window.cpp: ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/H
 		grid.h \
 		functor.h \
 		coord.h \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
 		window.h
 	/Users/vegard/Qt/5.4/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -I/Users/vegard/Qt/5.4/clang_64/mkspecs/macx-clang -I'/Users/vegard/Google Drive/Documents/master/fisheye' -I'/Users/vegard/Google Drive/Documents/master/shared' -I/Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtCore.framework/Headers -F/Users/vegard/Qt/5.4/clang_64/lib window.h -o moc_window.cpp
 
@@ -1054,7 +1058,9 @@ glwidget.o: glwidget.cpp glwidget.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
 		grid.h \
 		functor.h \
-		coord.h
+		coord.h \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glwidget.o glwidget.cpp
 
 main.o: main.cpp ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers/QApplication \
@@ -1209,7 +1215,9 @@ main.o: main.cpp ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
 		grid.h \
 		functor.h \
-		coord.h
+		coord.h \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 window.o: window.cpp window.h \
@@ -1362,7 +1370,9 @@ window.o: window.cpp window.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
 		grid.h \
 		functor.h \
-		coord.h
+		coord.h \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o window.o window.cpp
 
 coord.o: coord.cpp coord.h \
@@ -1373,7 +1383,9 @@ coord.o: coord.cpp coord.h \
 functor.o: functor.cpp functor.h \
 		coord.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/QGLWidget \
-		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qgl.h
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qgl.h \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o functor.o functor.cpp
 
 grid.o: grid.cpp grid.h \

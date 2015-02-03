@@ -1,5 +1,7 @@
 #include "coord.h"
 
+#include <QDebug>
+
 class Combinator;
 
 /**
@@ -58,15 +60,14 @@ private:
 class Homography : public Functor
 {
 public:
-    Homography(const Functor &fn, const Functor &inv)
-        : apply(fn), inverse(inv) { };
+    Homography() : apply(), inverse() { };
 
     virtual Coord operator()(Coord input) const {
         return apply(input);
     };
 
-    const Functor &apply;
-    const Functor &inverse;
+    Functor apply;
+    Functor inverse;
 };
 
 /**
@@ -169,7 +170,12 @@ public:
 class Fisheye : public Homography
 {
 public:
-    Fisheye() : Homography(apply, inverse) { };
+    Fisheye() : Homography(), apply(), inverse() { };
+
+    virtual Coord operator()(Coord input) const {
+        return apply(input);
+    };
+
     Fish apply;
     FishInverse inverse;
 };

@@ -73,14 +73,9 @@ void GLWidget::initializeGL()
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_MULTISAMPLE);
-    Fish fn1;
-    FishInverse fn2;
-    Combinator fn3(fn1, fn2);
-    Homography fisheye(fn1, fn2);
-    grid.transform(fisheye.inverse);
-    // grid.transform(fn2);
-    // grid.transform(fn3);
-    // grid.transform(fn1.chain(fn2));
+    Fisheye fisheye;
+    grid.transform(fisheye);
+    // grid.transform(fisheye.inverse);
     glUseProgram(program);
 
     // Texture object handle
