@@ -9,6 +9,8 @@ public:
     Grid();
     Grid(int h, int w);
     ~Grid();
+    Grid(const Grid &grid);
+    Grid& operator=(const Grid &grid);
 
     void resize(int h, int w);
 
@@ -29,6 +31,9 @@ private:
     void initVertices();
     void initTexels();
     void initIndices();
+    void init();
+    void copy(const Grid &grid);
+    void destruct();
 
     GLuint height;
     GLuint width;

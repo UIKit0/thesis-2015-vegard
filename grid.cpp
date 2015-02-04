@@ -18,12 +18,65 @@ Grid::Grid()
 Grid::Grid(int h, int w)
     : height(h), width(w), vertices(NULL), texels(NULL), indices(NULL)
 {
+    init();
+}
+
+/**
+ * Destructor.
+ */
+Grid::~Grid() {
+    destruct();
+}
+
+/**
+ * Copy constructor.
+ */
+Grid::Grid(const Grid &grid) {
+    copy(grid);
+}
+
+/**
+ * Copy assignment constructor.
+ */
+Grid& Grid::operator=(const Grid &grid) {
+    destruct();
+    copy(grid);
+    return *this;
+}
+
+/**
+ * Initialization utility function.
+ */
+void Grid::init() {
     initVertices();
     initTexels();
     initIndices();
 }
 
-Grid::~Grid() {
+/**
+ * Copy utility function.
+ */
+void Grid::copy(const Grid &grid) {
+    height = grid.height;
+    width = grid.width;
+    vertices = new GLfloat[grid.getVerticesCount()];
+    std::copy(grid.vertices, grid.vertices + grid.getVerticesCount(), vertices);
+    texels = new GLfloat[getTexelsCount()];
+    std::copy(grid.texels, grid.texels + grid.getTexelsCount(), texels);
+    indices = new GLuint[getIndicesCount()];
+    std::copy(grid.indices, grid.indices + grid.getIndicesCount(), indices);
+}
+
+/**
+ * Destruction utility function.
+ */
+void Grid::destruct() {
+    delete[] vertices;
+    delete[] texels;
+    delete[] indices;
+    vertices = NULL;
+    texels = NULL;
+    indices = NULL;
 }
 
 /**
@@ -33,6 +86,8 @@ Grid::~Grid() {
  */
 void Grid::resize(int h, int w)
 {
+    destruct();
+
     height = h;
     width = w;
 
@@ -40,9 +95,7 @@ void Grid::resize(int h, int w)
         return;
     }
 
-    initVertices();
-    initTexels();
-    initIndices();
+    init();
 }
 
 /**
@@ -175,8 +228,7 @@ void Grid::initTexels() {
  */
 void Grid::initIndices() {
     // http://stackoverflow.com/questions/5915753/generate-a-plane-with-triangle-strips
-    GLuint iSize = getIndicesCount();
-    indices = new GLuint[iSize];
+    indices = new GLuint[getIndicesCount()];
     GLuint i = 0;
 
     // Indices for drawing cube faces using triangle strips. Triangle
