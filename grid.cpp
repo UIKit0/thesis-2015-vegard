@@ -174,10 +174,12 @@ void Grid::transform(const Functor &fn) {
  * @param fn transformation functor.
  */
 void Grid::iTransform(const Functor &fn) {
+    TexCoordToPos texcoordtopos;
+    PosToTexCoord postotexcoord;
     int len = getTexelsCount();
     for(int i = 0; i < len; i += 2) {
         Point point(texels[i], texels[i + 1]);
-        point = fn(point);
+        point = postotexcoord(fn(texcoordtopos(point)));
         texels[i]     = point.x;
         texels[i + 1] = point.y;
     }

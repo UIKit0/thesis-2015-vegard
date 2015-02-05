@@ -72,9 +72,10 @@ void GLWidget::initializeGL()
     grid = Grid(10, 10);
     // grid = Grid(testImage.height(), testImage.width());
 
-    Fisheye fisheye;
-    grid.transform(fisheye);
-    // grid.transform(fisheye.inverse);
+    Fish fish;
+    FishInverse fishinverse;
+    grid.transform(fish);
+    // grid.iTransform(fishinverse);
 
     createProgram();
     QColor qtBlack = Qt::black;
