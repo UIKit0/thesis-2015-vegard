@@ -1,6 +1,3 @@
-VPATH += ../shared
-INCLUDEPATH += ../shared
-
 HEADERS       = glwidget.h \
                 window.h \
                 point.h \

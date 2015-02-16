@@ -15,7 +15,7 @@ CXX           = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefau
 DEFINES       = -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk -mmacosx-version-min=10.7 -Wall -W -fPIE $(DEFINES)
 CXXFLAGS      = -pipe -O2 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk -mmacosx-version-min=10.7 -Wall -W -fPIE $(DEFINES)
-INCPATH       = -I../../../../Qt/5.4/clang_64/mkspecs/macx-clang -I. -I../shared -I../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers -I../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers -I../../../../Qt/5.4/clang_64/lib/QtGui.framework/Versions/5/Headers -I../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/AGL.framework/Headers -F/Users/vegard/Qt/5.4/clang_64/lib
+INCPATH       = -I../../../../Qt/5.4/clang_64/mkspecs/macx-clang -I. -I../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers -I../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers -I../../../../Qt/5.4/clang_64/lib/QtGui.framework/Versions/5/Headers -I../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/AGL.framework/Headers -F/Users/vegard/Qt/5.4/clang_64/lib
 QMAKE         = /Users/vegard/Qt/5.4/clang_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -33,7 +33,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = fisheye1.0.0
-DISTDIR = /Users/vegard/Google\ Drive/Documents/master/fisheye/.tmp/fisheye1.0.0
+DISTDIR = /Users/vegard/GoogleDrive/Documents/master/fisheye/.tmp/fisheye1.0.0
 LINK          = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
 LFLAGS        = -headerpad_max_install_names -Wl,-syslibroot,/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk -mmacosx-version-min=10.7 -Wl,-rpath,/Users/vegard/Qt/5.4/clang_64/lib
 LIBS          = $(SUBLIBS) -F/Users/vegard/Qt/5.4/clang_64/lib -framework QtOpenGL -framework QtWidgets -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL 
@@ -737,7 +737,7 @@ moc_glwidget.cpp: ../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
 		glwidget.h
-	/Users/vegard/Qt/5.4/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -I/Users/vegard/Qt/5.4/clang_64/mkspecs/macx-clang -I'/Users/vegard/Google Drive/Documents/master/fisheye' -I'/Users/vegard/Google Drive/Documents/master/shared' -I/Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtCore.framework/Headers -F/Users/vegard/Qt/5.4/clang_64/lib glwidget.h -o moc_glwidget.cpp
+	/Users/vegard/Qt/5.4/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -I/Users/vegard/Qt/5.4/clang_64/mkspecs/macx-clang -I/Users/vegard/GoogleDrive/Documents/master/fisheye -I/Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtCore.framework/Headers -F/Users/vegard/Qt/5.4/clang_64/lib glwidget.h -o moc_glwidget.cpp
 
 moc_window.cpp: ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers/QWidget \
 		../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers/qwidget.h \
@@ -892,7 +892,7 @@ moc_window.cpp: ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/H
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
 		window.h
-	/Users/vegard/Qt/5.4/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -I/Users/vegard/Qt/5.4/clang_64/mkspecs/macx-clang -I'/Users/vegard/Google Drive/Documents/master/fisheye' -I'/Users/vegard/Google Drive/Documents/master/shared' -I/Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtCore.framework/Headers -F/Users/vegard/Qt/5.4/clang_64/lib window.h -o moc_window.cpp
+	/Users/vegard/Qt/5.4/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -I/Users/vegard/Qt/5.4/clang_64/mkspecs/macx-clang -I/Users/vegard/GoogleDrive/Documents/master/fisheye -I/Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtCore.framework/Headers -F/Users/vegard/Qt/5.4/clang_64/lib window.h -o moc_window.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
