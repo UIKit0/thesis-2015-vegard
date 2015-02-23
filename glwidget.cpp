@@ -74,7 +74,7 @@ void GLWidget::initializeGL()
 
     Fish fish;
     FishInverse fishinverse;
-    grid.transform(fish);
+    // grid.transform(fish);
     // grid.iTransform(fishinverse);
 
     createProgram();
