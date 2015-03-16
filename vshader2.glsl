@@ -21,7 +21,6 @@ vec2 fisheye(vec2 pos) {
     float r = p.x;
     float theta = p.y;
     float rr = r - 0.5 * r * r;
-    // float rr = -sqrt(1.0 - 2.0 * r) + 1.0;
     vec2 pp = vec2(rr, theta);
     return toPoint(pp);
 }
@@ -33,7 +32,6 @@ vec4 transform(vec4 pos) {
 }
 
 void main() {
-    gl_Position = a_position;
-    // gl_Position = transform(a_position);
+    gl_Position = transform(a_position);
     v_texcoord = a_texcoord;
 }

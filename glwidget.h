@@ -33,5 +33,5 @@ protected:
 
     GLuint program;
     Grid grid;
-    Case c;
+    Case1 c;
 };

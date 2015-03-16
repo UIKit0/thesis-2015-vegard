@@ -11,7 +11,7 @@
 #endif
 
 /**
- * Widget class.
+ * Case class.
  */
 class Case
 {
@@ -23,10 +23,25 @@ public:
     void paint();
 
 protected:
-    void createProgram();
+    void createProgram(const char *vshader, const char *fshader);
     GLuint loadShaderFromResource(GLenum type, QString resource);
     GLuint loadShader(GLenum type, const char *shaderSrc);
 
     GLuint program;
+};
+
+/**
+ * Case class.
+ */
+class Case1 : public Case
+{
+public:
+    Case1();
+    ~Case1();
+
+    void initialize();
+    void paint();
+
+protected:
     Grid grid;
 };

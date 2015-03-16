@@ -13,8 +13,10 @@ SOURCES       = glwidget.cpp \
                 case.cpp
 RESOURCES    += shaders.qrc \
                 textures.qrc
-OTHER_FILES  += fshader.glsl \
-                vshader.glsl
+OTHER_FILES  += fshader1.glsl \
+                fshader2.glsl \
+                vshader1.glsl \
+                vshader2.glsl
 QT           += opengl widgets
 
 contains(QT_CONFIG, opengles.) {

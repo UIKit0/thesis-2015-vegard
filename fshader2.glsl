@@ -27,7 +27,6 @@ vec2 fisheye(vec2 pos) {
     vec2 p = toPolar(pos);
     float r = p.x;
     float theta = p.y;
-    // float rr = r - 0.5 * r * r;
     float rr = -sqrt(1.0 - 2.0 * r) + 1.0;
     vec2 pp = vec2(rr, theta);
     return toPoint(pp);
@@ -38,6 +37,5 @@ vec2 transform(vec2 tex) {
 }
 
 void main() {
-    // gl_FragColor = texture2D(s_texture, v_texcoord);
     gl_FragColor = texture2D(s_texture, transform(v_texcoord));
 }

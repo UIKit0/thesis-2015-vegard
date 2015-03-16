@@ -579,8 +579,10 @@ compiler_rcc_make_all: qrc_shaders.cpp qrc_textures.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_shaders.cpp qrc_textures.cpp
 qrc_shaders.cpp: shaders.qrc \
-		vshader.glsl \
-		fshader.glsl
+		fshader1.glsl \
+		vshader2.glsl \
+		vshader1.glsl \
+		fshader2.glsl
 	/Users/vegard/Qt/5.4/clang_64/bin/rcc -name shaders shaders.qrc -o qrc_shaders.cpp
 
 qrc_textures.cpp: textures.qrc \
