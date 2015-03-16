@@ -2,7 +2,7 @@
 #include <QtWidgets>
 #include <QtOpenGL>
 
-#include "grid.h"
+#include "case.h"
 
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
@@ -31,10 +31,7 @@ protected:
     void paintGL();
     void resizeGL(int width, int height);
 
-    void createProgram();
-    GLuint loadShaderFromResource(GLenum type, QString resource);
-    GLuint loadShader(GLenum type, const char *shaderSrc);
-
     GLuint program;
     Grid grid;
+    Case c;
 };

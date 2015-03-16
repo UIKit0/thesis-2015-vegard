@@ -53,7 +53,8 @@ SOURCES       = glwidget.cpp \
 		window.cpp \
 		point.cpp \
 		functor.cpp \
-		grid.cpp qrc_shaders.cpp \
+		grid.cpp \
+		case.cpp qrc_shaders.cpp \
 		qrc_textures.cpp \
 		moc_glwidget.cpp \
 		moc_window.cpp
@@ -63,6 +64,7 @@ OBJECTS       = glwidget.o \
 		point.o \
 		functor.o \
 		grid.o \
+		case.o \
 		qrc_shaders.o \
 		qrc_textures.o \
 		moc_glwidget.o \
@@ -199,12 +201,14 @@ DIST          = ../../../../Qt/5.4/clang_64/mkspecs/features/spec_pre.prf \
 		window.h \
 		point.h \
 		functor.h \
-		grid.h glwidget.cpp \
+		grid.h \
+		case.h glwidget.cpp \
 		main.cpp \
 		window.cpp \
 		point.cpp \
 		functor.cpp \
-		grid.cpp
+		grid.cpp \
+		case.cpp
 QMAKE_TARGET  = fisheye
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = fisheye.app/Contents/MacOS/fisheye
@@ -547,8 +551,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents shaders.qrc textures.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents glwidget.h window.h point.h functor.h grid.h $(DISTDIR)/
-	$(COPY_FILE) --parents glwidget.cpp main.cpp window.cpp point.cpp functor.cpp grid.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents glwidget.h window.h point.h functor.h grid.h case.h $(DISTDIR)/
+	$(COPY_FILE) --parents glwidget.cpp main.cpp window.cpp point.cpp functor.cpp grid.cpp case.cpp $(DISTDIR)/
 
 
 clean:compiler_clean 
@@ -731,6 +735,7 @@ moc_glwidget.cpp: ../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
+		case.h \
 		grid.h \
 		functor.h \
 		point.h \
@@ -886,6 +891,7 @@ moc_window.cpp: ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/H
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
+		case.h \
 		grid.h \
 		functor.h \
 		point.h \
@@ -1056,6 +1062,7 @@ glwidget.o: glwidget.cpp glwidget.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
+		case.h \
 		grid.h \
 		functor.h \
 		point.h \
@@ -1213,6 +1220,7 @@ main.o: main.cpp ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
+		case.h \
 		grid.h \
 		functor.h \
 		point.h \
@@ -1368,6 +1376,7 @@ window.o: window.cpp window.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
+		case.h \
 		grid.h \
 		functor.h \
 		point.h \
@@ -1396,6 +1405,25 @@ grid.o: grid.cpp grid.h \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o grid.o grid.cpp
+
+case.o: case.cpp case.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/QtOpenGL \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qgl.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglbuffer.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglcolormap.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglframebufferobject.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglfunctions.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglpixelbuffer.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
+		grid.h \
+		functor.h \
+		point.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/QGLWidget \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o case.o case.cpp
 
 qrc_shaders.o: qrc_shaders.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_shaders.o qrc_shaders.cpp
