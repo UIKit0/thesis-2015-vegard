@@ -8,10 +8,6 @@
 #define GLWIDGET_H
 #endif
 
-#ifndef GL_MULTISAMPLE
-#define GL_MULTISAMPLE  0x809D
-#endif
-
 /**
  * Widget class.
  */
@@ -33,5 +29,9 @@ protected:
 
     GLuint program;
     Grid grid;
-    Case1 c;
+    Case1 c1;
+    Case2 c2;
+    Case3 c3;
+    Case4 c4;
+    bool measurements;
 };

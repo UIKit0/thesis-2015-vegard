@@ -1,52 +1,111 @@
 #include "case.h"
 
 /**
- * Map from Qt's ARGB endianness-dependent format to
- * GL's big-endian RGBA layout.
+ * Create a case.
  */
-static inline void qgl_byteSwapImage(QImage &img, GLenum pixel_type)
+Case::Case(const int n, const char *str)
+    : id(n), title(str), grid(10, 10), program(0), initialized(false), times()
 {
-    const int width = img.width();
-    const int height = img.height();
-
-    if(pixel_type == GL_UNSIGNED_INT_8_8_8_8_REV ||
-       (pixel_type == GL_UNSIGNED_BYTE &&
-        QSysInfo::ByteOrder == QSysInfo::LittleEndian)) {
-        for(int i = 0; i < height; ++i) {
-            uint *p = (uint*)img.scanLine(i);
-            for(int x = 0; x < width; ++x) {
-                p[x] = ((p[x] << 16) & 0xff0000) |
-                       ((p[x] >> 16) & 0xff) |
-                       (p[x] & 0xff00ff00);
-            }
-        }
-    } else {
-        for(int i = 0; i < height; ++i) {
-            uint *p = (uint*)img.scanLine(i);
-            for(int x = 0; x < width; ++x) {
-                p[x] = (p[x] << 8) | ((p[x] >> 24) & 0xff);
-            }
-        }
-    }
 }
 
 /**
- * Create a case.
+ * Initialize the case.
  */
-Case::Case()
-    : program(0)
+void Case::initialize()
+{
+    if(initialized) {
+        return;
+    }
+
+    // qWarning() << "Initializing case " << id << ": " << title;
+
+    initializeImage();
+    initializeGrid();
+    initializeProgram();
+    initializeGL();
+
+    initialized = true;
+}
+
+/**
+ * Initialize the test image.
+ */
+void Case::initializeImage()
+{
+    image = QImage(":/test.png");
+    image = image.mirrored();
+    byteSwapImage(image, GL_UNSIGNED_BYTE);
+}
+
+/**
+ * Initialize the grid mesh.
+ */
+void Case::initializeGrid()
 {
 }
 
-Case::~Case()
+/**
+ * Initialize the OpenGL program.
+ */
+void Case::initializeProgram()
 {
+    createProgram(":/vshader1.glsl", ":/fshader1.glsl");
 }
 
 /**
  * Initialize the OpenGL environment.
  */
-void Case::initialize()
+void Case::initializeGL()
 {
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glEnable(GL_DEPTH_TEST);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_MULTISAMPLE);
+    glUseProgram(program);
+
+    // Texture object handle
+    GLuint textureId;
+
+    // Use tightly packed data
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    // Generate a texture object
+    glGenTextures(1, &textureId);
+
+    // Bind the texture object
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    // Load the texture
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 image.height(), image.width(),
+                 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 image.constBits());
+
+    // Set the filtering mode
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    GL_LINEAR);
+
+    // Get the sampler locations
+    GLuint samplerLoc = glGetUniformLocation(program, "s_texture");
+
+    // Bind the texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    // Set the sampler texture unit to 0
+    glUniform1i(samplerLoc, 0);
+
+    // Load texture coordinates
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, grid.getTexels());
+    glEnableVertexAttribArray(0);
+
+    // Load vertex positions
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, grid.getVertices());
+    glEnableVertexAttribArray(1);
 }
 
 /**
@@ -54,6 +113,58 @@ void Case::initialize()
  */
 void Case::paint()
 {
+    QElapsedTimer timer;
+    timer.start();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDrawElements(GL_TRIANGLE_STRIP, grid.getIndicesCount(), GL_UNSIGNED_INT, grid.getIndices());
+    addTime(timer.nsecsElapsed());
+}
+
+/**
+ * Run the case a number of times.
+ */
+void Case::run()
+{
+    for(int i = 0; i < 1000; i++) {
+        paint();
+    }
+}
+
+/**
+ * Add time measurement.
+ */
+void Case::addTime(int time)
+{
+    times << time;
+    // qWarning() << "Added time " << time;
+    // qWarning() << "Average time is " << (int)averageTime();
+}
+
+/**
+ * Calculate the average time measurement.
+ */
+float Case::averageTime()
+{
+    if(times.size() <= 0) {
+        return 0.0;
+    }
+
+    float sum = 0;
+    for(int i = 0; i < times.size(); i++) {
+        sum += times[i];
+    }
+
+    return sum / times.size();
+}
+
+/**
+ * Print the average time measurement.
+ */
+void Case::printAverage()
+{
+    qWarning() << "Average time of case " << id << ": " << title << "\n"
+               << averageTime() << "ns" << "\n";
 }
 
 /**
@@ -126,6 +237,7 @@ GLuint Case::loadShader(GLenum type, const char *shaderSrc)
     shader = glCreateShader(type);
 
     if(shader == 0) {
+        qWarning() << "Error creating shader";
         return 0;
     }
 
@@ -157,98 +269,74 @@ GLuint Case::loadShader(GLenum type, const char *shaderSrc)
     return shader;
 }
 
-
 /**
- * Create a case.
+ * Map from Qt's ARGB endianness-dependent format to
+ * GL's big-endian RGBA layout.
  */
-Case1::Case1()
-    : Case(), grid()
+void Case::byteSwapImage(QImage &img, GLenum pixel_type)
 {
+    const int width = img.width();
+    const int height = img.height();
+
+    if(pixel_type == GL_UNSIGNED_INT_8_8_8_8_REV ||
+       (pixel_type == GL_UNSIGNED_BYTE &&
+        QSysInfo::ByteOrder == QSysInfo::LittleEndian)) {
+        for(int i = 0; i < height; ++i) {
+            uint *p = (uint*)img.scanLine(i);
+            for(int x = 0; x < width; ++x) {
+                p[x] = ((p[x] << 16) & 0xff0000) |
+                       ((p[x] >> 16) & 0xff) |
+                       (p[x] & 0xff00ff00);
+            }
+        }
+    } else {
+        for(int i = 0; i < height; ++i) {
+            uint *p = (uint*)img.scanLine(i);
+            for(int x = 0; x < width; ++x) {
+                p[x] = (p[x] << 8) | ((p[x] >> 24) & 0xff);
+            }
+        }
+    }
 }
 
-Case1::~Case1()
-{
-}
-
 /**
- * Initialize the OpenGL environment.
+ * Case 1: Forward mapping on the CPU
  */
-void Case1::initialize()
+void Case1::initializeGrid()
 {
-    QImage testImage(":/test.png");
-    testImage = testImage.mirrored();
-    qgl_byteSwapImage(testImage, GL_UNSIGNED_BYTE);
-
-    grid = Grid(10, 10);
-    // grid = Grid(testImage.height(), testImage.width());
-
     Fish fish;
-    FishInverse fishinverse;
-    // grid.transform(fish);
-    // grid.iTransform(fishinverse);
-
-    createProgram(":/vshader1.glsl", ":/fshader1.glsl");
-    // qglClearColor(qtBlack);
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_DEPTH_TEST);
-    glShadeModel(GL_SMOOTH);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_MULTISAMPLE);
-    glUseProgram(program);
-
-    // Texture object handle
-    GLuint textureId;
-
-    // Use tightly packed data
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    // Generate a texture object
-    glGenTextures(1, &textureId);
-
-    // Bind the texture object
-    glBindTexture(GL_TEXTURE_2D, textureId);
-
-    // Load the texture
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                 testImage.height(), testImage.width(),
-                 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 testImage.constBits());
-
-    // Set the filtering mode
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    GL_LINEAR);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-    //                 GL_MIRRORED_REPEAT);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R,
-    //                 GL_MIRRORED_REPEAT);
-
-    // Get the sampler locations
-    GLuint samplerLoc = glGetUniformLocation(program, "s_texture");
-
-    // Bind the texture
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureId);
-
-    // Set the sampler texture unit to 0
-    glUniform1i(samplerLoc, 0);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, grid.getTexels());
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, grid.getVertices());
-    glEnableVertexAttribArray(1);
+    QElapsedTimer timer;
+    timer.start();
+    grid.transform(fish);
+    qWarning() << "Case " << id << " grid transformation: "
+               << timer.nsecsElapsed() << "\n"; // 25000 ns
 }
 
 /**
- * Draw the OpenGL environment.
+ * Case 2: Backward mapping on the CPU
  */
-void Case1::paint()
+void Case2::initializeGrid()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    FishInverse fishinverse;
+    QElapsedTimer timer;
+    timer.start();
+    grid.iTransform(fishinverse);
+    qWarning() << "Case " << id << " grid transformation: "
+               << timer.nsecsElapsed() << "\n";
+}
 
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDrawElements(GL_TRIANGLE_STRIP, grid.getIndicesCount(), GL_UNSIGNED_INT, grid.getIndices());
+/**
+ * Case 3: Forward mapping on the GPU
+ */
+void Case3::initializeProgram()
+{
+    createProgram(":/vshader2.glsl", ":/fshader1.glsl");
+}
+
+/**
+ * Case 4: Backward mapping on the GPU
+ */
+void Case4::initializeProgram()
+{
+    createProgram(":/vshader1.glsl", ":/fshader2.glsl");
 }

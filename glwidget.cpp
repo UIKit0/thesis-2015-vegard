@@ -5,7 +5,7 @@
  */
 GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
-      grid(), c()
+      grid(), c1(), c2(), c3(), c4(), measurements(false)
 {
     program = 0;
 }
@@ -35,7 +35,25 @@ QSize GLWidget::sizeHint() const
  */
 void GLWidget::initializeGL()
 {
-    c.initialize();
+    if(!measurements) {
+        qWarning() << "";
+
+        c1.initialize();
+        c1.run();
+        c2.initialize();
+        c2.run();
+        c3.initialize();
+        c3.run();
+        c4.initialize();
+        c4.run();
+
+        c1.printAverage();
+        c2.printAverage();
+        c3.printAverage();
+        c4.printAverage();
+
+        measurements = true;
+    }
 }
 
 /**
@@ -43,7 +61,7 @@ void GLWidget::initializeGL()
  */
 void GLWidget::paintGL()
 {
-    c.paint();
+    c4.paint();
 }
 
 /**
