@@ -1,0 +1,3 @@
+Compile and run with:
+
+qmake fisheye.pro && make clean && make && ./fisheye.app/Contents/MacOS/fisheye
