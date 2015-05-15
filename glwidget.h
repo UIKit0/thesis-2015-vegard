@@ -25,7 +25,6 @@ public:
 protected:
     void initializeGL();
     void paintGL();
-    void resizeGL(int width, int height);
 
     GLuint program;
     Grid grid;
@@ -33,5 +32,6 @@ protected:
     Case2 c2;
     Case3 c3;
     Case4 c4;
+    Case5 c5;
     bool measurements;
 };

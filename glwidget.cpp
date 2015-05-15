@@ -46,11 +46,14 @@ void GLWidget::initializeGL()
         c3.run();
         c4.initialize();
         c4.run();
+        c5.initialize();
+        c5.run();
 
         c1.printAverage();
         c2.printAverage();
         c3.printAverage();
         c4.printAverage();
+        c5.printAverage();
 
         measurements = true;
     }
@@ -61,14 +64,5 @@ void GLWidget::initializeGL()
  */
 void GLWidget::paintGL()
 {
-    c4.paint();
-}
-
-/**
- * Resize the OpenGL environment.
- */
-void GLWidget::resizeGL(int width, int height)
-{
-    int side = qMin(width, height);
-    glViewport((width - side) / 2, (height - side) / 2, side, side);
+    c5.paint();
 }

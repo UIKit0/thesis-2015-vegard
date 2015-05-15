@@ -62,7 +62,7 @@ void Case::initializeGL()
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glEnable(GL_MULTISAMPLE);
+    // glEnable(GL_MULTISAMPLE);
     glUseProgram(program);
 
     // Texture object handle
@@ -339,4 +339,12 @@ void Case3::initializeProgram()
 void Case4::initializeProgram()
 {
     createProgram(":/vshader1.glsl", ":/fshader2.glsl");
+}
+
+/**
+ * Case 5: Supersampling
+ */
+void Case5::initializeProgram()
+{
+    createProgram(":/vshader1.glsl", ":/fshader3.glsl");
 }

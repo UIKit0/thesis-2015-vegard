@@ -15,6 +15,7 @@ RESOURCES    += shaders.qrc \
                 textures.qrc
 OTHER_FILES  += fshader1.glsl \
                 fshader2.glsl \
+                fshader3.glsl \
                 vshader1.glsl \
                 vshader2.glsl
 QT           += opengl widgets

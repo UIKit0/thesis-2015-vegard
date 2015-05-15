@@ -581,6 +581,7 @@ compiler_rcc_clean:
 qrc_shaders.cpp: shaders.qrc \
 		fshader1.glsl \
 		vshader2.glsl \
+		fshader3.glsl \
 		vshader1.glsl \
 		fshader2.glsl
 	/Users/vegard/Qt/5.4/clang_64/bin/rcc -name shaders shaders.qrc -o qrc_shaders.cpp

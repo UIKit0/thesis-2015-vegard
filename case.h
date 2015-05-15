@@ -72,3 +72,10 @@ public:
     Case4() : Case(4, "Backward mapping on the GPU") { }
     void initializeProgram();
 };
+
+class Case5 : public Case
+{
+public:
+    Case5() : Case(5, "Supersampling") { }
+    void initializeProgram();
+};
