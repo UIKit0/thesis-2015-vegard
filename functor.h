@@ -105,16 +105,50 @@ public:
 };
 
 /**
+ * Clamp a coordinate to a range.
+ */
+class Clamp : public Functor
+{
+public:
+    Clamp(float xminimum, float xmaximum, float yminimum, float ymaximum)
+     : xmin(xminimum), xmax(xmaximum), ymin(yminimum), ymax(ymaximum) { };
+    virtual Point operator()(Point input) const {
+        float x = input.x;
+        float y = input.y;
+
+        if(x < xmin) {
+            x = xmin;
+        } else if(x > xmax) {
+            x = xmax;
+        }
+
+        if(y < ymin) {
+            y = ymin;
+        } else if(y > ymax) {
+            y = ymax;
+        }
+
+        return Point(x, y);
+    };
+
+    float xmin;
+    float xmax;
+    float ymin;
+    float ymax;
+};
+
+/**
  * Transform vertex positions in the range [-0.5, 0.5] to
  * texture coordinates in the range [0, 1].
  */
 class PosToTexCoord : public Functor
 {
 public:
-    PosToTexCoord() : shift(0.5) { };
+    PosToTexCoord() : clamp(-0.5, 0.5, -0.5, 0.5), shift(0.5) { };
     virtual Point operator()(Point input) const {
         return shift(input);
     };
+    Clamp clamp;
     Shift shift;
 };
 
@@ -125,10 +159,11 @@ public:
 class TexCoordToPos : public Functor
 {
 public:
-    TexCoordToPos() : shift(-0.5) { };
+    TexCoordToPos() : clamp(-0.5, 0.5, -0.5, 0.5), shift(-0.5) { };
     virtual Point operator()(Point input) const {
         return shift(input);
     };
+    Clamp clamp;
     Shift shift;
 };
 
@@ -141,7 +176,9 @@ public:
     Fish() { };
     virtual Point operator()(Point input) const {
         Polar p = input.toPolar();
-        GLfloat rr = p.r - 0.5 * p.r * p.r;
+        GLfloat s = 0.3390;
+        GLfloat lambda = 3.8342;
+        GLfloat rr = s * log(1 + lambda * p.r);
         Polar pp = Polar(rr, p.theta);
         return pp.toPoint();
     };
@@ -156,7 +193,9 @@ public:
     FishInverse() { };
     virtual Point operator()(Point input) const {
         Polar p = input.toPolar();
-        GLfloat rr = -sqrt(1 - 2 * p.r) + 1;
+        GLfloat s = 0.3390;
+        GLfloat lambda = 3.8342;
+        GLfloat rr = (exp(p.r / s) - 1) / lambda;
         Polar pp = Polar(rr, p.theta);
         return pp.toPoint();
     };

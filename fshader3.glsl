@@ -1,6 +1,31 @@
 varying vec2 v_texcoord;
 uniform sampler2D s_texture;
 
+vec4 color(sampler2D texture, vec2 pos) {
+    if(pos.x < 0.0 || pos.y < 0.0 || pos.x > 1.0 || pos.y > 1.0) {
+        return vec4(0.0, 0.0, 0.0, 1.0);
+    } else {
+        return texture2D(texture, pos);
+    }
+}
+
+vec2 clamp(vec2 pos) {
+    float x = pos.x;
+    float y = pos.y;
+
+    if(x < 0.0 || y < 0.0) {
+        x = 0.0;
+        y = 0.0;
+    }
+
+    if(x > 1.0 || y > 1.0) {
+        x = 1.0;
+        y = 1.0;
+    }
+
+    return vec2(x, y);
+}
+
 vec2 postotexcoord(vec2 pos) {
     return vec2(pos.x + 0.5, pos.y + 0.5);
 }
@@ -27,7 +52,9 @@ vec2 fisheye(vec2 pos) {
     vec2 p = toPolar(pos);
     float r = p.x;
     float theta = p.y;
-    float rr = -sqrt(1.0 - 2.0 * r) + 1.0;
+    float s = 0.3390;
+    float lambda = 3.8342;
+    float rr = (exp(r / s) - 1.0) / lambda;
     vec2 pp = vec2(rr, theta);
     return toPoint(pp);
 }
@@ -71,15 +98,15 @@ void main() {
     v7 = transform(v4);
     v8 = transform(v4);
 
-    vec4 c0 = texture2D(s_texture, v0);
-    vec4 c1 = texture2D(s_texture, v1);
-    vec4 c2 = texture2D(s_texture, v2);
-    vec4 c3 = texture2D(s_texture, v3);
-    vec4 c4 = texture2D(s_texture, v4);
-    vec4 c5 = texture2D(s_texture, v4);
-    vec4 c6 = texture2D(s_texture, v4);
-    vec4 c7 = texture2D(s_texture, v4);
-    vec4 c8 = texture2D(s_texture, v4);
+    vec4 c0 = color(s_texture, v0);
+    vec4 c1 = color(s_texture, v1);
+    vec4 c2 = color(s_texture, v2);
+    vec4 c3 = color(s_texture, v3);
+    vec4 c4 = color(s_texture, v4);
+    vec4 c5 = color(s_texture, v4);
+    vec4 c6 = color(s_texture, v4);
+    vec4 c7 = color(s_texture, v4);
+    vec4 c8 = color(s_texture, v4);
 
     // vec4 cx = c4; // disable supersampling
     // vec4 cx = blend5(c0, c2, c4, c6, c8);
