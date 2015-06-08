@@ -46,10 +46,10 @@ void GLWidget::initializeGL()
         // c2.run();
         // c3.initialize();
         // c3.run();
-        c4.initialize();
-        c4.run();
-        // c5.initialize();
-        // c5.run();
+        // c4.initialize();
+        // c4.run();
+        c5.initialize();
+        c5.run();
 
         // c1.printAverage();
         // c2.printAverage();
@@ -67,6 +67,6 @@ void GLWidget::paintGL()
     // c1.paint();
     // c2.paint();
     // c3.paint();
-    c4.paint();
-    // c5.paint();
+    // c4.paint();
+    c5.paint();
 }

@@ -63,12 +63,37 @@ vec2 transform(vec2 tex) {
     return postotexcoord(fisheye(texcoordtopos(tex)));
 }
 
+vec4 filter9(vec4 c1, vec4 c2, vec4 c3, vec4 c4, vec4 c5, vec4 c6, vec4 c7, vec4 c8, vec4 c9, mat3 kernel, float div) {
+    return (c1 * kernel[0][0] +
+            c2 * kernel[0][1] +
+            c3 * kernel[0][2] +
+            c4 * kernel[1][0] +
+            c5 * kernel[1][1] +
+            c6 * kernel[1][2] +
+            c7 * kernel[2][0] +
+            c8 * kernel[2][1] +
+            c9 * kernel[2][2]) / div;
+}
+
 vec4 blend5(vec4 c1, vec4 c2, vec4 c3, vec4 c4, vec4 c5) {
+    // mat3(0.0, 1.0, 0.0,
+    //      1.0, 1.0, 1.0,
+    //      0.0, 1.0, 0.0)
     return (c1 + c2 + c3 + c4 + c5) / 5.0;
 }
 
 vec4 blend9(vec4 c1, vec4 c2, vec4 c3, vec4 c4, vec4 c5, vec4 c6, vec4 c7, vec4 c8, vec4 c9) {
-    return (c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8 + c9) / 9.0;
+    mat3 kernel = mat3(1.0, 1.0, 1.0,
+                       1.0, 1.0, 1.0,
+                       1.0, 1.0, 1.0);
+    return filter9(c1, c2, c3, c4, c5, c6, c7, c8, c9, kernel, 9.0);
+}
+
+vec4 gaussian9(vec4 c1, vec4 c2, vec4 c3, vec4 c4, vec4 c5, vec4 c6, vec4 c7, vec4 c8, vec4 c9) {
+    mat3 kernel = mat3(1.0, 2.0, 1.0,
+                       2.0, 4.0, 2.0,
+                       1.0, 2.0, 1.0);
+    return filter9(c1, c2, c3, c4, c5, c6, c7, c8, c9, kernel, 16.0);
 }
 
 void main() {
@@ -110,7 +135,8 @@ void main() {
 
     // vec4 cx = c4; // disable supersampling
     // vec4 cx = blend5(c0, c2, c4, c6, c8);
-    vec4 cx = blend9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
+    // vec4 cx = blend9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
+    vec4 cx = gaussian9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
 
     gl_FragColor = cx;
 }
