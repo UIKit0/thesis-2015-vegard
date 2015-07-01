@@ -96,6 +96,13 @@ vec4 gaussian9(vec4 c1, vec4 c2, vec4 c3, vec4 c4, vec4 c5, vec4 c6, vec4 c7, ve
     return filter9(c1, c2, c3, c4, c5, c6, c7, c8, c9, kernel, 16.0);
 }
 
+vec4 sharpen9(vec4 c1, vec4 c2, vec4 c3, vec4 c4, vec4 c5, vec4 c6, vec4 c7, vec4 c8, vec4 c9) {
+    mat3 kernel = mat3(-1.0, -1.0, -1.0,
+                       -1.0,  9.0, -1.0,
+                       -1.0, -1.0, -1.0);
+    return filter9(c1, c2, c3, c4, c5, c6, c7, c8, c9, kernel, 1.0);
+}
+
 void main() {
     float px = 1.0/200.0; // fragment size
 
@@ -118,10 +125,10 @@ void main() {
     v2 = transform(v2);
     v3 = transform(v3);
     v4 = transform(v4);
-    v5 = transform(v4);
-    v6 = transform(v4);
-    v7 = transform(v4);
-    v8 = transform(v4);
+    v5 = transform(v5);
+    v6 = transform(v6);
+    v7 = transform(v7);
+    v8 = transform(v8);
 
     vec4 c0 = color(s_texture, v0);
     vec4 c1 = color(s_texture, v1);
@@ -137,6 +144,7 @@ void main() {
     // vec4 cx = blend5(c0, c2, c4, c6, c8);
     // vec4 cx = blend9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
     vec4 cx = gaussian9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
+    // vec4 cx = sharpen9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
 
     gl_FragColor = cx;
 }

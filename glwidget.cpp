@@ -40,22 +40,22 @@ void GLWidget::initializeGL()
 
         qWarning() << "";
 
-        // c1.initialize();
-        // c1.run();
-        // c2.initialize();
-        // c2.run();
-        // c3.initialize();
-        // c3.run();
-        // c4.initialize();
-        // c4.run();
+        c1.initialize();
+        c1.run();
+        c2.initialize();
+        c2.run();
+        c3.initialize();
+        c3.run();
+        c4.initialize();
+        c4.run();
         c5.initialize();
         c5.run();
 
-        // c1.printAverage();
-        // c2.printAverage();
-        // c3.printAverage();
-        // c4.printAverage();
-        // c5.printAverage();
+        c1.printAverage();
+        c2.printAverage();
+        c3.printAverage();
+        c4.printAverage();
+        c5.printAverage();
     }
 }
 
@@ -64,9 +64,9 @@ void GLWidget::initializeGL()
  */
 void GLWidget::paintGL()
 {
-    // c1.paint();
-    // c2.paint();
-    // c3.paint();
-    // c4.paint();
+    c1.paint();
+    c2.paint();
+    c3.paint();
+    c4.paint();
     c5.paint();
 }
