@@ -1,9 +1,9 @@
-#include "case.h"
+#include "strategy.h"
 
 /**
  * Create a case.
  */
-Case::Case(const int n, const char *str)
+Strategy::Strategy(const int n, const char *str)
     : id(n), title(str), grid(10, 10), program(0), initialized(false), times()
 {
 }
@@ -11,7 +11,7 @@ Case::Case(const int n, const char *str)
 /**
  * Initialize the case.
  */
-void Case::initialize()
+void Strategy::initialize()
 {
     if(initialized) {
         return;
@@ -30,7 +30,7 @@ void Case::initialize()
 /**
  * Initialize the test image.
  */
-void Case::initializeImage()
+void Strategy::initializeImage()
 {
     image = QImage(":/test.png");
     image = image.mirrored();
@@ -40,14 +40,14 @@ void Case::initializeImage()
 /**
  * Initialize the grid mesh.
  */
-void Case::initializeGrid()
+void Strategy::initializeGrid()
 {
 }
 
 /**
  * Initialize the OpenGL program.
  */
-void Case::initializeProgram()
+void Strategy::initializeProgram()
 {
     createProgram(":/vshader1.glsl", ":/fshader1.glsl");
 }
@@ -55,7 +55,7 @@ void Case::initializeProgram()
 /**
  * Initialize the OpenGL environment.
  */
-void Case::initializeGL()
+void Strategy::initializeGL()
 {
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glEnable(GL_DEPTH_TEST);
@@ -111,7 +111,7 @@ void Case::initializeGL()
 /**
  * Draw the OpenGL environment.
  */
-void Case::paint()
+void Strategy::paint()
 {
     QElapsedTimer timer;
     timer.start();
@@ -124,7 +124,7 @@ void Case::paint()
 /**
  * Run the case a number of times.
  */
-void Case::run()
+void Strategy::run()
 {
     for(int i = 0; i < 1000; i++) {
         paint();
@@ -134,7 +134,7 @@ void Case::run()
 /**
  * Add time measurement.
  */
-void Case::addTime(int time)
+void Strategy::addTime(int time)
 {
     times << time;
     // qWarning() << "Added time " << time;
@@ -144,7 +144,7 @@ void Case::addTime(int time)
 /**
  * Calculate the average time measurement.
  */
-float Case::averageTime()
+float Strategy::averageTime()
 {
     if(times.size() <= 0) {
         return 0.0;
@@ -161,7 +161,7 @@ float Case::averageTime()
 /**
  * Print the average time measurement.
  */
-void Case::printAverage()
+void Strategy::printAverage()
 {
     qWarning() << "Average time of case " << id << ": " << title << "\n"
                << averageTime() << "ns" << "\n";
@@ -170,7 +170,7 @@ void Case::printAverage()
 /**
  * Create an OpenGL program object.
  */
-void Case::createProgram(const char *vshader, const char *fshader)
+void Strategy::createProgram(const char *vshader, const char *fshader)
 {
     GLint linked = 0;
 
@@ -214,7 +214,7 @@ void Case::createProgram(const char *vshader, const char *fshader)
  * @param type the type, GL_VERTEX_SHADER or GL_FRAGMENT_SHADER.
  * @param resource path to resource.
  */
-GLuint Case::loadShaderFromResource(GLenum type, QString resource)
+GLuint Strategy::loadShaderFromResource(GLenum type, QString resource)
 {
     QFile shader(resource);
     shader.open(QIODevice::ReadOnly);
@@ -228,7 +228,7 @@ GLuint Case::loadShaderFromResource(GLenum type, QString resource)
  * @param type the type, GL_VERTEX_SHADER or GL_FRAGMENT_SHADER.
  * @param shaderSrc string containing the shader's source.
  */
-GLuint Case::loadShader(GLenum type, const char *shaderSrc)
+GLuint Strategy::loadShader(GLenum type, const char *shaderSrc)
 {
     GLuint shader;
     GLint compiled;
@@ -273,7 +273,7 @@ GLuint Case::loadShader(GLenum type, const char *shaderSrc)
  * Map from Qt's ARGB endianness-dependent format to
  * GL's big-endian RGBA layout.
  */
-void Case::byteSwapImage(QImage &img, GLenum pixel_type)
+void Strategy::byteSwapImage(QImage &img, GLenum pixel_type)
 {
     const int width = img.width();
     const int height = img.height();
@@ -300,51 +300,51 @@ void Case::byteSwapImage(QImage &img, GLenum pixel_type)
 }
 
 /**
- * Case 1: Forward mapping on the CPU
+ * Strategy 1: Forward mapping on the CPU
  */
-void Case1::initializeGrid()
+void StrategyCPFB::initializeGrid()
 {
     Fish fish;
     QElapsedTimer timer;
     timer.start();
     grid.transform(fish);
-    qWarning() << "Case " << id << " grid transformation: "
+    qWarning() << "Strategy " << id << " grid transformation: "
                << timer.nsecsElapsed() << "\n"; // 25000 ns
 }
 
 /**
- * Case 2: Backward mapping on the CPU
+ * Strategy 2: Backward mapping on the CPU
  */
-void Case2::initializeGrid()
+void StrategyCPBB::initializeGrid()
 {
     FishInverse fishinverse;
     QElapsedTimer timer;
     timer.start();
     grid.iTransform(fishinverse);
-    qWarning() << "Case " << id << " grid transformation: "
+    qWarning() << "Strategy " << id << " grid transformation: "
                << timer.nsecsElapsed() << "\n";
 }
 
 /**
- * Case 3: Forward mapping on the GPU
+ * Strategy 3: Forward mapping on the GPU
  */
-void Case3::initializeProgram()
+void StrategyGDFB::initializeProgram()
 {
     createProgram(":/vshader2.glsl", ":/fshader1.glsl");
 }
 
 /**
- * Case 4: Backward mapping on the GPU
+ * Strategy 4: Backward mapping on the GPU
  */
-void Case4::initializeProgram()
+void StrategyGDBB::initializeProgram()
 {
     createProgram(":/vshader1.glsl", ":/fshader2.glsl");
 }
 
 /**
- * Case 5: Supersampling
+ * Strategy 5: Supersampling
  */
-void Case5::initializeProgram()
+void StrategyGDBM::initializeProgram()
 {
     createProgram(":/vshader1.glsl", ":/fshader3.glsl");
 }

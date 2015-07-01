@@ -7,16 +7,16 @@
 #endif
 
 /**
- * Case class.
+ * Strategy class.
  *
  * This class uses the Template Method pattern from the
  * Design Patterns book (Gang of Four, 1995). That is,
  * parts of the case code are redefined in subclasses.
  */
-class Case
+class Strategy
 {
 public:
-    Case(const int n, const char *str);
+    Strategy(const int n, const char *str);
 
     virtual void initialize();
     virtual void initializeImage();
@@ -45,37 +45,37 @@ protected:
     QList<int> times;
 };
 
-class Case1 : public Case
+class StrategyCPFB : public Strategy
 {
 public:
-    Case1() : Case(1, "Forward mapping on the CPU") { }
+    StrategyCPFB() : Strategy(1, "CPFB") { }
     void initializeGrid();
 };
 
-class Case2 : public Case
+class StrategyCPBB : public Strategy
 {
 public:
-    Case2() : Case(2, "Backward mapping on the CPU") { }
+    StrategyCPBB() : Strategy(2, "CPBB") { }
     void initializeGrid();
 };
 
-class Case3 : public Case
+class StrategyGDFB : public Strategy
 {
 public:
-    Case3() : Case(3, "Forward mapping on the GPU") { }
+    StrategyGDFB() : Strategy(3, "GDFB") { }
     void initializeProgram();
 };
 
-class Case4 : public Case
+class StrategyGDBB : public Strategy
 {
 public:
-    Case4() : Case(4, "Backward mapping on the GPU") { }
+    StrategyGDBB() : Strategy(4, "GDBB") { }
     void initializeProgram();
 };
 
-class Case5 : public Case
+class StrategyGDBM : public Strategy
 {
 public:
-    Case5() : Case(5, "Supersampling") { }
+    StrategyGDBM() : Strategy(5, "GDBM") { }
     void initializeProgram();
 };

@@ -54,7 +54,7 @@ SOURCES       = glwidget.cpp \
 		point.cpp \
 		functor.cpp \
 		grid.cpp \
-		case.cpp qrc_shaders.cpp \
+		strategy.cpp qrc_shaders.cpp \
 		qrc_textures.cpp \
 		moc_glwidget.cpp \
 		moc_window.cpp
@@ -64,7 +64,7 @@ OBJECTS       = glwidget.o \
 		point.o \
 		functor.o \
 		grid.o \
-		case.o \
+		strategy.o \
 		qrc_shaders.o \
 		qrc_textures.o \
 		moc_glwidget.o \
@@ -202,13 +202,13 @@ DIST          = ../../../../Qt/5.4/clang_64/mkspecs/features/spec_pre.prf \
 		point.h \
 		functor.h \
 		grid.h \
-		case.h glwidget.cpp \
+		strategy.h glwidget.cpp \
 		main.cpp \
 		window.cpp \
 		point.cpp \
 		functor.cpp \
 		grid.cpp \
-		case.cpp
+		strategy.cpp
 QMAKE_TARGET  = fisheye
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = fisheye.app/Contents/MacOS/fisheye
@@ -551,8 +551,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents shaders.qrc textures.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents glwidget.h window.h point.h functor.h grid.h case.h $(DISTDIR)/
-	$(COPY_FILE) --parents glwidget.cpp main.cpp window.cpp point.cpp functor.cpp grid.cpp case.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents glwidget.h window.h point.h functor.h grid.h strategy.h $(DISTDIR)/
+	$(COPY_FILE) --parents glwidget.cpp main.cpp window.cpp point.cpp functor.cpp grid.cpp strategy.cpp $(DISTDIR)/
 
 
 clean:compiler_clean 
@@ -738,7 +738,7 @@ moc_glwidget.cpp: ../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
-		case.h \
+		strategy.h \
 		grid.h \
 		functor.h \
 		point.h \
@@ -894,7 +894,7 @@ moc_window.cpp: ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/H
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
-		case.h \
+		strategy.h \
 		grid.h \
 		functor.h \
 		point.h \
@@ -1065,7 +1065,7 @@ glwidget.o: glwidget.cpp glwidget.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
-		case.h \
+		strategy.h \
 		grid.h \
 		functor.h \
 		point.h \
@@ -1223,7 +1223,7 @@ main.o: main.cpp ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
-		case.h \
+		strategy.h \
 		grid.h \
 		functor.h \
 		point.h \
@@ -1379,7 +1379,7 @@ window.o: window.cpp window.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
-		case.h \
+		strategy.h \
 		grid.h \
 		functor.h \
 		point.h \
@@ -1409,7 +1409,7 @@ grid.o: grid.cpp grid.h \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o grid.o grid.cpp
 
-case.o: case.cpp case.h \
+strategy.o: strategy.cpp strategy.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/QtOpenGL \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qgl.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglbuffer.h \
@@ -1426,7 +1426,7 @@ case.o: case.cpp case.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/QGLWidget \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o case.o case.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o strategy.o strategy.cpp
 
 qrc_shaders.o: qrc_shaders.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_shaders.o qrc_shaders.cpp

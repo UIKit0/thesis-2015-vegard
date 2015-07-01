@@ -2,7 +2,7 @@
 #include <QtWidgets>
 #include <QtOpenGL>
 
-#include "case.h"
+#include "strategy.h"
 
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
@@ -28,10 +28,10 @@ protected:
 
     GLuint program;
     Grid grid;
-    Case1 c1;
-    Case2 c2;
-    Case3 c3;
-    Case4 c4;
-    Case5 c5;
+    StrategyCPFB s1;
+    StrategyCPBB s2;
+    StrategyGDFB s3;
+    StrategyGDBB s4;
+    StrategyGDBM s5;
     bool measurements;
 };

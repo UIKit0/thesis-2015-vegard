@@ -5,7 +5,7 @@
  */
 GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
-      grid(), c1(), c2(), c3(), c4(), measurements(false)
+      grid(), s1(), s2(), s3(), s4(), s5(), measurements(false)
 {
     program = 0;
 }
@@ -40,22 +40,22 @@ void GLWidget::initializeGL()
 
         qWarning() << "";
 
-        c1.initialize();
-        c1.run();
-        c2.initialize();
-        c2.run();
-        c3.initialize();
-        c3.run();
-        c4.initialize();
-        c4.run();
-        c5.initialize();
-        c5.run();
+        s1.initialize();
+        s1.run();
+        s2.initialize();
+        s2.run();
+        s3.initialize();
+        s3.run();
+        s4.initialize();
+        s4.run();
+        s5.initialize();
+        s5.run();
 
-        c1.printAverage();
-        c2.printAverage();
-        c3.printAverage();
-        c4.printAverage();
-        c5.printAverage();
+        s1.printAverage();
+        s2.printAverage();
+        s3.printAverage();
+        s4.printAverage();
+        s5.printAverage();
     }
 }
 
@@ -64,9 +64,9 @@ void GLWidget::initializeGL()
  */
 void GLWidget::paintGL()
 {
-    c1.paint();
-    c2.paint();
-    c3.paint();
-    c4.paint();
-    c5.paint();
+    // s1.paint();
+    // s2.paint();
+    // s3.paint();
+    // s4.paint();
+    s5.paint();
 }

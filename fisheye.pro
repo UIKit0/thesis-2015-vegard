@@ -3,14 +3,14 @@ HEADERS       = glwidget.h \
                 point.h \
                 functor.h \
                 grid.h \
-                case.h
+                strategy.h
 SOURCES       = glwidget.cpp \
                 main.cpp \
                 window.cpp \
                 point.cpp \
                 functor.cpp \
                 grid.cpp \
-                case.cpp
+                strategy.cpp
 RESOURCES    += shaders.qrc \
                 textures.qrc
 OTHER_FILES  += fshader1.glsl \
