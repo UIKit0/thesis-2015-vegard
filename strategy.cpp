@@ -4,7 +4,7 @@
  * Create a case.
  */
 Strategy::Strategy(const int n, const char *str)
-    : id(n), title(str), grid(10, 10), program(0), initialized(false), times()
+    : id(n), title(str), grid(10, 10), program(0), initialized(false), avg(0), var(0), dev(0), times()
 {
 }
 
@@ -138,20 +138,20 @@ void Strategy::addTime(int time)
 {
     times << time;
     // qWarning() << "Added time " << time;
-    // qWarning() << "Average time is " << (int)averageTime();
+    // qWarning() << "Average time is " << (int)average();
 }
 
 /**
- * Calculate the average time measurement.
+ * Calculate the average of a range.
  */
-float Strategy::averageTime()
+float Strategy::calculateAverage(int start, int end)
 {
     if(times.size() <= 0) {
         return 0.0;
     }
 
     float sum = 0;
-    for(int i = 0; i < times.size(); i++) {
+    for(int i = start; i < end; i++) {
         sum += times[i];
     }
 
@@ -159,12 +159,124 @@ float Strategy::averageTime()
 }
 
 /**
+ * Calculate the variance of a range.
+ */
+float Strategy::calculateVariance(int start, int end)
+{
+    if(times.size() <= 0) {
+        return 0.0;
+    }
+
+    float avg = calculateAverage(start, end);
+
+    float sum = 0;
+    for(int i = 0; i < times.size(); i++) {
+        float diff = times[i] - avg;
+        sum += diff * diff;
+    }
+
+    return sum / times.size();
+}
+
+/**
+ * Calculate the standard deviation of a range.
+ */
+float Strategy::calculateDeviation(int start, int end)
+{
+    float var = calculateVariance(start, end);
+    return sqrt(var);
+}
+
+/**
+ * Calculate the average time measurement.
+ */
+float Strategy::average()
+{
+    if(avg > 0) {
+        return avg;
+    }
+
+    avg = calculateAverage(0, times.size());
+
+    return avg;
+}
+
+/**
+ * Calculate the variance.
+ */
+float Strategy::variance()
+{
+    if(var > 0) {
+        return var;
+    }
+
+    var = calculateVariance(0, times.size());
+
+    return var;
+}
+
+/**
+ * Calculate the standard deviation.
+ */
+float Strategy::deviation()
+{
+    if(dev > 0) {
+        return dev;
+    }
+
+    dev = calculateDeviation(0, times.size());
+
+    return dev;
+}
+
+/**
+ * Calculate the average excepting the first measurement.
+ */
+float Strategy::average1()
+{
+    return calculateAverage(1, times.size());
+}
+
+/**
+ * Calculate the variance excepting the first measurement.
+ */
+float Strategy::variance1()
+{
+    return calculateVariance(1, times.size());
+}
+
+/**
+ * Calculate the standard deviation excepting the first measurement.
+ */
+float Strategy::deviation1()
+{
+    return calculateDeviation(1, times.size());
+}
+
+/**
  * Print the average time measurement.
  */
-void Strategy::printAverage()
+void Strategy::printMeasurements()
 {
-    qWarning() << "Average time of case " << id << ": " << title << "\n"
-               << averageTime() << "ns" << "\n";
+    qWarning() << "Average time of strategy " << id << ": " << title << "\n"
+               << (int)average() << "ns"
+               << "(deviation: " << (int)deviation() << ")\n"
+               << "(repetitions: avg = " << (int)average1()
+               << ", dev = " << (int)deviation1() << ")"
+               << "\n";
+    printTimes();
+}
+
+/**
+ * Print time measurements.
+ */
+void Strategy::printTimes()
+{
+    int size = 10; // times.size()
+    for(int i = 0; i < size; i++) {
+        qWarning() << times[i] << "ns";
+    }
+    qWarning() << "...\n";
 }
 
 /**

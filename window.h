@@ -23,6 +23,7 @@ public:
 
 private:
     GLWidget *glWidget;
+    QScrollArea *scrollArea;
 };
 
 #endif

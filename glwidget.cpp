@@ -27,7 +27,7 @@ QSize GLWidget::minimumSizeHint() const
  */
 QSize GLWidget::sizeHint() const
 {
-    return QSize(400, 400);
+    return QSize(700, 700);
 }
 
 /**
@@ -51,11 +51,11 @@ void GLWidget::initializeGL()
         s5.initialize();
         s5.run();
 
-        s1.printAverage();
-        s2.printAverage();
-        s3.printAverage();
-        s4.printAverage();
-        s5.printAverage();
+        s1.printMeasurements();
+        s2.printMeasurements();
+        s3.printMeasurements();
+        s4.printMeasurements();
+        s5.printMeasurements();
     }
 }
 

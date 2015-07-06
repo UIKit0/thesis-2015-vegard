@@ -3,7 +3,7 @@ uniform sampler2D s_texture;
 
 vec4 color(sampler2D texture, vec2 pos) {
     if(pos.x < 0.0 || pos.y < 0.0 || pos.x > 1.0 || pos.y > 1.0) {
-        return vec4(0.0, 0.0, 0.0, 1.0);
+        return vec4(0.0, 0.0, 0.0, 1.0); // black
     } else {
         return texture2D(texture, pos);
     }
@@ -26,12 +26,12 @@ vec2 clamp(vec2 pos) {
     return vec2(x, y);
 }
 
-vec2 postotexcoord(vec2 pos) {
-    return vec2(pos.x + 0.5, pos.y + 0.5);
-}
-
 vec2 texcoordtopos(vec2 tex) {
     return vec2(tex.x - 0.5, tex.y - 0.5);
+}
+
+vec2 postotexcoord(vec2 pos) {
+    return vec2(pos.x + 0.5, pos.y + 0.5);
 }
 
 vec2 toPolar(vec2 point) {
