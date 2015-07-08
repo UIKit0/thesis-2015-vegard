@@ -4,7 +4,7 @@
  * Create a case.
  */
 Strategy::Strategy(const int n, const char *str)
-    : id(n), title(str), grid(100, 100), program(0), initialized(false), avg(0), var(0), dev(0), times()
+    : id(n), title(str), grid(700, 700), program(0), initialized(false), avg(0), var(0), dev(0), times()
 {
 }
 
@@ -32,7 +32,8 @@ void Strategy::initialize()
  */
 void Strategy::initializeImage()
 {
-    image = QImage(":/test.png");
+    // image = QImage(":/test.png");
+    image = QImage(":/differentlovers.png");
     image = image.mirrored();
     byteSwapImage(image, GL_UNSIGNED_BYTE);
 }
@@ -456,6 +457,7 @@ void StrategyGDFB::initializeProgram()
  */
 void StrategyGDBB::initializeProgram()
 {
+    grid = Grid(2, 2);
     createProgram(":/vshader1.glsl", ":/fshader2.glsl");
 }
 
@@ -464,5 +466,6 @@ void StrategyGDBB::initializeProgram()
  */
 void StrategyGDBM::initializeProgram()
 {
+    grid = Grid(2, 2);
     createProgram(":/vshader1.glsl", ":/fshader3.glsl");
 }
