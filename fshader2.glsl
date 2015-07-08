@@ -27,11 +27,11 @@ vec2 clamp(vec2 pos) {
 }
 
 vec2 texcoordtopos(vec2 tex) {
-    return vec2(tex.x - 0.5, tex.y - 0.5);
+    return 2.0 * vec2(tex.x - 0.5, tex.y - 0.5);
 }
 
 vec2 postotexcoord(vec2 pos) {
-    return vec2(pos.x + 0.5, pos.y + 0.5);
+    return vec2(pos.x / 2.0 + 0.5, pos.y / 2.0 + 0.5);
 }
 
 vec2 toPolar(vec2 point) {
@@ -52,9 +52,9 @@ vec2 fisheye(vec2 pos) {
     vec2 p = toPolar(pos);
     float r = p.x;
     float theta = p.y;
-    float s = 0.3390;
+    float s = 0.76;
     float lambda = 3.8342;
-    float rr = (exp(r / s) - 1.0) / lambda;
+    float rr = s * log(1.0 + lambda * r);
     vec2 pp = vec2(rr, theta);
     return toPoint(pp);
 }

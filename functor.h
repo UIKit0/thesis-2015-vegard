@@ -144,11 +144,11 @@ public:
 class PosToTexCoord : public Functor
 {
 public:
-    PosToTexCoord() : clamp(-0.5, 0.5, -0.5, 0.5), shift(0.5) { };
+    PosToTexCoord() : scale(0.5), shift(0.5) { };
     virtual Point operator()(Point input) const {
-        return shift(input);
+        return shift(scale(input));
     };
-    Clamp clamp;
+    Scale scale;
     Shift shift;
 };
 
@@ -159,11 +159,11 @@ public:
 class TexCoordToPos : public Functor
 {
 public:
-    TexCoordToPos() : clamp(-0.5, 0.5, -0.5, 0.5), shift(-0.5) { };
+    TexCoordToPos() : scale(2.0), shift(-0.5) { };
     virtual Point operator()(Point input) const {
-        return shift(input);
+        return scale(shift(input));
     };
-    Clamp clamp;
+    Scale scale;
     Shift shift;
 };
 
@@ -176,9 +176,9 @@ public:
     Fish() { };
     virtual Point operator()(Point input) const {
         Polar p = input.toPolar();
-        GLfloat s = 0.3390;
+        GLfloat s = 0.76;
         GLfloat lambda = 3.8342;
-        GLfloat rr = s * log(1 + lambda * p.r);
+        GLfloat rr = (exp(p.r / s) - 1) / lambda;
         Polar pp = Polar(rr, p.theta);
         return pp.toPoint();
     };
@@ -193,9 +193,9 @@ public:
     FishInverse() { };
     virtual Point operator()(Point input) const {
         Polar p = input.toPolar();
-        GLfloat s = 0.3390;
+        GLfloat s = 0.76;
         GLfloat lambda = 3.8342;
-        GLfloat rr = (exp(p.r / s) - 1) / lambda;
+        GLfloat rr = s * log(1 + lambda * p.r);
         Polar pp = Polar(rr, p.theta);
         return pp.toPoint();
     };

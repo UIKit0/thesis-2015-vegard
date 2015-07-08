@@ -37,7 +37,6 @@ void GLWidget::initializeGL()
 {
     if(!measurements) {
         measurements = true;
-
         qWarning() << "";
 
         s1.initialize();

@@ -20,9 +20,9 @@ vec2 fisheye(vec2 pos) {
     vec2 p = toPolar(pos);
     float r = p.x;
     float theta = p.y;
-    float s = 0.3390;
+    float s = 0.76;
     float lambda = 3.8342;
-    float rr = s * log(1.0 + lambda * r);
+    float rr = (exp(r / s) - 1.0) / lambda;
     vec2 pp = vec2(rr, theta);
     return toPoint(pp);
 }

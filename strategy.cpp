@@ -4,7 +4,7 @@
  * Create a case.
  */
 Strategy::Strategy(const int n, const char *str)
-    : id(n), title(str), grid(10, 10), program(0), initialized(false), avg(0), var(0), dev(0), times()
+    : id(n), title(str), grid(100, 100), program(0), initialized(false), avg(0), var(0), dev(0), times()
 {
 }
 
@@ -123,8 +123,8 @@ void Strategy::paint()
     addTime(timer.nsecsElapsed());
 
     // Unload the texture
-    GLuint texture = 0;
-    glDeleteTextures(1, &texture);
+    GLuint id = 0;
+    glDeleteTextures(1, &id);
 }
 
 /**
@@ -427,7 +427,7 @@ void StrategyCPFB::initializeGrid()
     timer.start();
     grid.transform(fish);
     qWarning() << "Strategy " << id << " grid transformation: "
-               << timer.nsecsElapsed() << "\n"; // 25000 ns
+               << timer.nsecsElapsed() << "ns\n";
 }
 
 /**
@@ -440,7 +440,7 @@ void StrategyCPBB::initializeGrid()
     timer.start();
     grid.iTransform(fishinverse);
     qWarning() << "Strategy " << id << " grid transformation: "
-               << timer.nsecsElapsed() << "\n";
+               << timer.nsecsElapsed() << "ns\n";
 }
 
 /**

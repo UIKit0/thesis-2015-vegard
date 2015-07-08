@@ -194,7 +194,7 @@ void Grid::initVertices() {
     GLfloat h = height - 1;
     GLfloat w = width - 1;
     Shift shift(-w / 2.0, -h / 2.0);
-    Scale scale(1 / w, 1 / h);
+    Scale scale(2 / w, 2 / h);
 
     for(GLuint row = 0; row < height; row++) {
         for(GLuint col = 0; col < width; col++) {
