@@ -77,12 +77,6 @@ void Strategy::initializeGL()
     // Bind the texture object
     glBindTexture(GL_TEXTURE_2D, textureId);
 
-    // Load the texture
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                 image.height(), image.width(),
-                 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 image.constBits());
-
     // Set the filtering mode
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     GL_LINEAR);
@@ -115,10 +109,22 @@ void Strategy::paint()
 {
     QElapsedTimer timer;
     timer.start();
+
+    // Load the texture
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 image.height(), image.width(),
+                 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 image.constBits());
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLE_STRIP, grid.getIndicesCount(), GL_UNSIGNED_INT, grid.getIndices());
+
     addTime(timer.nsecsElapsed());
+
+    // Unload the texture
+    GLuint texture = 0;
+    glDeleteTextures(1, &texture);
 }
 
 /**
