@@ -4,7 +4,7 @@
  * Create a case.
  */
 Strategy::Strategy(const int n, const char *str)
-    : id(n), title(str), grid(700, 700), program(0), initialized(false), avg(0), var(0), dev(0), times()
+    : id(n), title(str), grid(700, 700), program(0), initialized(false), measurements()
 {
 }
 
@@ -121,7 +121,7 @@ void Strategy::paint()
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLE_STRIP, grid.getIndicesCount(), GL_UNSIGNED_INT, grid.getIndices());
 
-    addTime(timer.nsecsElapsed());
+    measurements.addTime(timer.nsecsElapsed());
 
     // Unload the texture
     GLuint id = 0;
@@ -139,151 +139,19 @@ void Strategy::run()
 }
 
 /**
- * Add time measurement.
- */
-void Strategy::addTime(int time)
-{
-    times << time;
-    // qWarning() << "Added time " << time;
-    // qWarning() << "Average time is " << (int)average();
-}
-
-/**
- * Calculate the average of a range.
- */
-float Strategy::calculateAverage(int start, int end)
-{
-    if(times.size() <= 0) {
-        return 0.0;
-    }
-
-    float sum = 0;
-    for(int i = start; i < end; i++) {
-        sum += times[i];
-    }
-
-    return sum / times.size();
-}
-
-/**
- * Calculate the variance of a range.
- */
-float Strategy::calculateVariance(int start, int end)
-{
-    if(times.size() <= 0) {
-        return 0.0;
-    }
-
-    float avg = calculateAverage(start, end);
-
-    float sum = 0;
-    for(int i = 0; i < times.size(); i++) {
-        float diff = times[i] - avg;
-        sum += diff * diff;
-    }
-
-    return sum / times.size();
-}
-
-/**
- * Calculate the standard deviation of a range.
- */
-float Strategy::calculateDeviation(int start, int end)
-{
-    float var = calculateVariance(start, end);
-    return sqrt(var);
-}
-
-/**
- * Calculate the average time measurement.
- */
-float Strategy::average()
-{
-    if(avg > 0) {
-        return avg;
-    }
-
-    avg = calculateAverage(0, times.size());
-
-    return avg;
-}
-
-/**
- * Calculate the variance.
- */
-float Strategy::variance()
-{
-    if(var > 0) {
-        return var;
-    }
-
-    var = calculateVariance(0, times.size());
-
-    return var;
-}
-
-/**
- * Calculate the standard deviation.
- */
-float Strategy::deviation()
-{
-    if(dev > 0) {
-        return dev;
-    }
-
-    dev = calculateDeviation(0, times.size());
-
-    return dev;
-}
-
-/**
- * Calculate the average excepting the first measurement.
- */
-float Strategy::average1()
-{
-    return calculateAverage(1, times.size());
-}
-
-/**
- * Calculate the variance excepting the first measurement.
- */
-float Strategy::variance1()
-{
-    return calculateVariance(1, times.size());
-}
-
-/**
- * Calculate the standard deviation excepting the first measurement.
- */
-float Strategy::deviation1()
-{
-    return calculateDeviation(1, times.size());
-}
-
-/**
  * Print the average time measurement.
  */
 void Strategy::printMeasurements()
 {
-    qWarning() << "Average time of strategy " << id << ": " << title << "\n"
-               << (int)average() << "ns"
-               << "(deviation: " << (int)deviation() << ")\n"
-               << "(repetitions: avg = " << (int)average1()
-               << ", dev = " << (int)deviation1() << ")"
+    qWarning() << "Average time of strategy " << id
+               << "(" << grid.getHeight() << "x" << grid.getWidth()
+               << "): " << title << "\n"
+               << (int)measurements.average() << "ns"
+               << "(deviation: " << (int)measurements.deviation() << ")\n"
+               << "(repetitions: avg = " << (int)measurements.average1()
+               << ", dev = " << (int)measurements.deviation1() << ")"
                << "\n";
-    printTimes();
-}
-
-/**
- * Print time measurements.
- */
-void Strategy::printTimes()
-{
-    int size = 10; // times.size()
-    for(int i = 0; i < size; i++) {
-        qWarning() << times[i] << "ns";
-    }
-    qWarning() << "...\n";
+    measurements.printTimes();
 }
 
 /**
@@ -424,11 +292,21 @@ void Strategy::byteSwapImage(QImage &img, GLenum pixel_type)
 void StrategyCPFB::initializeGrid()
 {
     Fish fish;
-    QElapsedTimer timer;
-    timer.start();
+    Measurements mes;
     grid.transform(fish);
-    qWarning() << "Strategy " << id << " grid transformation: "
-               << timer.nsecsElapsed() << "ns\n";
+
+    for(int i = 0; i < 1000; i++) {
+        Grid testgrid(700, 700);
+        QElapsedTimer t;
+        t.start();
+        testgrid.transform(fish);
+        mes.addTime(t.nsecsElapsed());
+
+    }
+
+    qWarning() << "Strategy " << id << " grid transformation ("
+               << grid.getHeight() << "x" << grid.getWidth() << "): ";
+    mes.printMeasurements();
 }
 
 /**
@@ -437,11 +315,21 @@ void StrategyCPFB::initializeGrid()
 void StrategyCPBB::initializeGrid()
 {
     FishInverse fishinverse;
-    QElapsedTimer timer;
-    timer.start();
+    Measurements mes;
     grid.iTransform(fishinverse);
-    qWarning() << "Strategy " << id << " grid transformation: "
-               << timer.nsecsElapsed() << "ns\n";
+
+    for(int i = 0; i < 1000; i++) {
+        Grid testgrid(700, 700);
+        QElapsedTimer t;
+        t.start();
+        testgrid.iTransform(fishinverse);
+        mes.addTime(t.nsecsElapsed());
+
+    }
+
+    qWarning() << "Strategy " << id << " grid transformation ("
+               << grid.getHeight() << "x" << grid.getWidth() << "): ";
+    mes.printMeasurements();
 }
 
 /**

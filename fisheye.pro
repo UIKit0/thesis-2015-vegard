@@ -3,6 +3,7 @@ HEADERS       = glwidget.h \
                 point.h \
                 functor.h \
                 grid.h \
+                measurements.h \
                 strategy.h
 SOURCES       = glwidget.cpp \
                 main.cpp \
@@ -10,6 +11,7 @@ SOURCES       = glwidget.cpp \
                 point.cpp \
                 functor.cpp \
                 grid.cpp \
+                measurements.cpp \
                 strategy.cpp
 RESOURCES    += shaders.qrc \
                 textures.qrc

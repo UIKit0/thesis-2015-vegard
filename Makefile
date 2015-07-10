@@ -54,6 +54,7 @@ SOURCES       = glwidget.cpp \
 		point.cpp \
 		functor.cpp \
 		grid.cpp \
+		measurements.cpp \
 		strategy.cpp qrc_shaders.cpp \
 		qrc_textures.cpp \
 		moc_glwidget.cpp \
@@ -64,6 +65,7 @@ OBJECTS       = glwidget.o \
 		point.o \
 		functor.o \
 		grid.o \
+		measurements.o \
 		strategy.o \
 		qrc_shaders.o \
 		qrc_textures.o \
@@ -202,12 +204,14 @@ DIST          = ../../../../Qt/5.4/clang_64/mkspecs/features/spec_pre.prf \
 		point.h \
 		functor.h \
 		grid.h \
+		measurements.h \
 		strategy.h glwidget.cpp \
 		main.cpp \
 		window.cpp \
 		point.cpp \
 		functor.cpp \
 		grid.cpp \
+		measurements.cpp \
 		strategy.cpp
 QMAKE_TARGET  = fisheye
 DESTDIR       = #avoid trailing-slash linebreak
@@ -551,8 +555,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents shaders.qrc textures.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents glwidget.h window.h point.h functor.h grid.h strategy.h $(DISTDIR)/
-	$(COPY_FILE) --parents glwidget.cpp main.cpp window.cpp point.cpp functor.cpp grid.cpp strategy.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents glwidget.h window.h point.h functor.h grid.h measurements.h strategy.h $(DISTDIR)/
+	$(COPY_FILE) --parents glwidget.cpp main.cpp window.cpp point.cpp functor.cpp grid.cpp measurements.cpp strategy.cpp $(DISTDIR)/
 
 
 clean:compiler_clean 
@@ -745,6 +749,7 @@ moc_glwidget.cpp: ../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/
 		point.h \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
+		measurements.h \
 		glwidget.h
 	/Users/vegard/Qt/5.4/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -I/Users/vegard/Qt/5.4/clang_64/mkspecs/macx-clang -I/Users/vegard/GoogleDrive/Documents/master/fisheye -I/Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtCore.framework/Headers -F/Users/vegard/Qt/5.4/clang_64/lib glwidget.h -o moc_glwidget.cpp
 
@@ -901,6 +906,7 @@ moc_window.cpp: ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/H
 		point.h \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
+		measurements.h \
 		window.h
 	/Users/vegard/Qt/5.4/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -I/Users/vegard/Qt/5.4/clang_64/mkspecs/macx-clang -I/Users/vegard/GoogleDrive/Documents/master/fisheye -I/Users/vegard/Qt/5.4/clang_64/lib/QtOpenGL.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtWidgets.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtGui.framework/Headers -I/Users/vegard/Qt/5.4/clang_64/lib/QtCore.framework/Headers -F/Users/vegard/Qt/5.4/clang_64/lib window.h -o moc_window.cpp
 
@@ -1071,7 +1077,8 @@ glwidget.o: glwidget.cpp glwidget.h \
 		functor.h \
 		point.h \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
-		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
+		measurements.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glwidget.o glwidget.cpp
 
 main.o: main.cpp ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/Headers/QApplication \
@@ -1229,7 +1236,8 @@ main.o: main.cpp ../../../../Qt/5.4/clang_64/lib/QtWidgets.framework/Versions/5/
 		functor.h \
 		point.h \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
-		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
+		measurements.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 window.o: window.cpp window.h \
@@ -1385,7 +1393,8 @@ window.o: window.cpp window.h \
 		functor.h \
 		point.h \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
-		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
+		measurements.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o window.o window.cpp
 
 point.o: point.cpp point.h \
@@ -1410,6 +1419,26 @@ grid.o: grid.cpp grid.h \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o grid.o grid.cpp
 
+measurements.o: measurements.cpp strategy.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/QtOpenGL \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qgl.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglbuffer.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglcolormap.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglframebufferobject.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglfunctions.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglpixelbuffer.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qglshaderprogram.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglglobal.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qtopenglversion.h \
+		grid.h \
+		functor.h \
+		point.h \
+		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/QGLWidget \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
+		measurements.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o measurements.o measurements.cpp
+
 strategy.o: strategy.cpp strategy.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/QtOpenGL \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/qgl.h \
@@ -1426,7 +1455,8 @@ strategy.o: strategy.cpp strategy.h \
 		point.h \
 		../../../../Qt/5.4/clang_64/lib/QtOpenGL.framework/Versions/5/Headers/QGLWidget \
 		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/QDebug \
-		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h
+		../../../../Qt/5.4/clang_64/lib/QtCore.framework/Versions/5/Headers/qdebug.h \
+		measurements.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o strategy.o strategy.cpp
 
 qrc_shaders.o: qrc_shaders.cpp 
