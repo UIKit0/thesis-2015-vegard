@@ -3,7 +3,7 @@ uniform sampler2D s_texture;
 
 vec4 color(sampler2D texture, vec2 pos) {
     if(pos.x < 0.0 || pos.y < 0.0 || pos.x > 1.0 || pos.y > 1.0) {
-        return vec4(0.0, 0.0, 0.0, 1.0); // black
+        return vec4(1.0, 1.0, 1.0, 1.0); // white
     } else {
         return texture2D(texture, pos);
     }

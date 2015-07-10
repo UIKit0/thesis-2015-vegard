@@ -116,7 +116,7 @@ void Strategy::paint()
                  image.height(), image.width(),
                  0, GL_RGBA, GL_UNSIGNED_BYTE,
                  image.constBits());
-
+    glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLE_STRIP, grid.getIndicesCount(), GL_UNSIGNED_INT, grid.getIndices());

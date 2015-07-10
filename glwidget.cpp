@@ -41,20 +41,20 @@ void GLWidget::initializeGL()
 
         s1.initialize();
         s1.run();
-        s2.initialize();
-        s2.run();
-        s3.initialize();
-        s3.run();
-        s4.initialize();
-        s4.run();
-        s5.initialize();
-        s5.run();
+        // s2.initialize();
+        // s2.run();
+        // s3.initialize();
+        // s3.run();
+        // s4.initialize();
+        // s4.run();
+        // s5.initialize();
+        // s5.run();
 
-        s1.printMeasurements();
-        s2.printMeasurements();
-        s3.printMeasurements();
-        s4.printMeasurements();
-        s5.printMeasurements();
+        // s1.printMeasurements();
+        // s2.printMeasurements();
+        // s3.printMeasurements();
+        // s4.printMeasurements();
+        // s5.printMeasurements();
     }
 }
 
@@ -63,9 +63,9 @@ void GLWidget::initializeGL()
  */
 void GLWidget::paintGL()
 {
-    // s1.paint();
+    s1.paint();
     // s2.paint();
     // s3.paint();
     // s4.paint();
-    s5.paint();
+    // s5.paint();
 }
