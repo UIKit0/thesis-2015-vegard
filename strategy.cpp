@@ -5,6 +5,14 @@
  */
 Strategy::Strategy(const int n, const char *str)
     : id(n), title(str), grid(700, 700), program(0), initialized(false), measurements()
+    // : id(n), title(str), grid(600, 600), program(0), initialized(false), measurements()
+    // : id(n), title(str), grid(500, 500), program(0), initialized(false), measurements()
+    // : id(n), title(str), grid(400, 400), program(0), initialized(false), measurements()
+    // : id(n), title(str), grid(300, 300), program(0), initialized(false), measurements()
+    // : id(n), title(str), grid(200, 200), program(0), initialized(false), measurements()
+    // : id(n), title(str), grid(100, 100), program(0), initialized(false), measurements()
+    // : id(n), title(str), grid(50, 50), program(0), initialized(false), measurements()
+    // : id(n), title(str), grid(10, 10), program(0), initialized(false), measurements()
 {
 }
 
@@ -33,7 +41,8 @@ void Strategy::initialize()
 void Strategy::initializeImage()
 {
     // image = QImage(":/test.png");
-    image = QImage(":/differentlovers.png");
+    // image = QImage(":/differentlovers.png");
+    image = QImage(":/stripes.png");
     image = image.mirrored();
     byteSwapImage(image, GL_UNSIGNED_BYTE);
 }

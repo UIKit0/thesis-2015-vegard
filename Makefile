@@ -592,6 +592,7 @@ qrc_shaders.cpp: shaders.qrc \
 
 qrc_textures.cpp: textures.qrc \
 		differentlovers.png \
+		stripes.png \
 		test.png
 	/Users/vegard/Qt/5.4/clang_64/bin/rcc -name textures textures.qrc -o qrc_textures.cpp
 
