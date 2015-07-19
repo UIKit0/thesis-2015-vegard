@@ -1,14 +1,6 @@
 varying vec2 v_texcoord;
 uniform sampler2D s_texture;
 
-vec4 color(sampler2D texture, vec2 pos) {
-    if(pos.x < 0.0 || pos.y < 0.0 || pos.x > 1.0 || pos.y > 1.0) {
-        return vec4(1.0, 1.0, 1.0, 1.0); // white
-    } else {
-        return texture2D(texture, pos);
-    }
-}
-
 vec2 clamp(vec2 pos) {
     float x = pos.x;
     float y = pos.y;
@@ -103,6 +95,33 @@ vec4 sharpen9(vec4 c1, vec4 c2, vec4 c3, vec4 c4, vec4 c5, vec4 c6, vec4 c7, vec
     return filter9(c1, c2, c3, c4, c5, c6, c7, c8, c9, kernel, 1.0);
 }
 
+float distance() {
+    return length(texcoordtopos(v_texcoord));
+}
+
+float distance2() {
+    vec2 vx = abs(fisheye(texcoordtopos(v_texcoord)));
+    return max(vx.x, vx.y);
+}
+
+vec4 color(sampler2D texture, vec2 pos) {
+    if(pos.x < 0.0 || pos.y < 0.0 || pos.x > 1.0 || pos.y > 1.0) {
+        return vec4(1.0, 1.0, 1.0, 1.0); // white
+    } else {
+        return texture2D(texture, pos);
+
+        // float r = distance();
+        //
+        // if(r > 0.8) {
+        //     return vec4(0.8, 0.8, 0.8, 1.0);
+        // } else if(r > 0.5) {
+        //     return vec4(0.5, 0.5, 0.5, 1.0);
+        // } else {
+        //     return vec4(0.3, 0.3, 0.3, 1.0);
+        // }
+    }
+}
+
 void main() {
     float px = 1.0/700.0; // fragment size
 
@@ -140,11 +159,16 @@ void main() {
     vec4 c7 = color(s_texture, v4);
     vec4 c8 = color(s_texture, v4);
 
-    // vec4 cx = c4; // disable supersampling
-    // vec4 cx = blend5(c0, c2, c4, c6, c8);
-    // vec4 cx = blend9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
-    vec4 cx = gaussian9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
-    // vec4 cx = sharpen9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
+    vec4 cx = c4;
+    float r = distance2();
+
+    if(r > 0.8) {
+        cx = sharpen9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
+    } else if(r > 0.5) {
+        cx = c4;
+    } else {
+        cx = gaussian9(c0, c1, c2, c3, c4, c5, c6, c7, c8);
+    }
 
     gl_FragColor = cx;
 }

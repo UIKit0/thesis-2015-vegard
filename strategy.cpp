@@ -41,8 +41,8 @@ void Strategy::initialize()
 void Strategy::initializeImage()
 {
     // image = QImage(":/test.png");
-    // image = QImage(":/differentlovers.png");
-    image = QImage(":/stripes.png");
+    image = QImage(":/differentlovers.png");
+    // image = QImage(":/stripes.png");
     image = image.mirrored();
     byteSwapImage(image, GL_UNSIGNED_BYTE);
 }
