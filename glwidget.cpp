@@ -39,21 +39,21 @@ void GLWidget::initializeGL()
         measurements = true;
         qWarning() << "";
 
-        // s1.initialize();
-        // s1.run();
-        // s2.initialize();
-        // s2.run();
-        // s3.initialize();
-        // s3.run();
-        // s4.initialize();
-        // s4.run();
+        s1.initialize();
+        s1.run();
+        s2.initialize();
+        s2.run();
+        s3.initialize();
+        s3.run();
+        s4.initialize();
+        s4.run();
         s5.initialize();
         s5.run();
 
-        // s1.printMeasurements();
-        // s2.printMeasurements();
-        // s3.printMeasurements();
-        // s4.printMeasurements();
+        s1.printMeasurements();
+        s2.printMeasurements();
+        s3.printMeasurements();
+        s4.printMeasurements();
         s5.printMeasurements();
     }
 }
